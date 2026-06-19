@@ -46,15 +46,15 @@ func colorize(s, mod, code string, escape int) string {
 	return r
 }
 
-func TRed(s, mod string, escape int) string    { return colorize(s, mod, cRed, escape) }
-func TGreen(s, mod string, escape int) string  { return colorize(s, mod, cGreen, escape) }
-func TYellow(s, mod string, escape int) string { return colorize(s, mod, cYellow, escape) }
-func TBlue(s, mod string, escape int) string   { return colorize(s, mod, cBlue, escape) }
-func TPurple(s, mod string, escape int) string { return colorize(s, mod, cPurple, escape) }
-func TCyan(s, mod string, escape int) string   { return colorize(s, mod, cCyan, escape) }
-func TWhite(s, mod string, escape int) string  { return colorize(s, mod, cWhite, escape) }
+func Red(s, mod string, escape int) string    { return colorize(s, mod, cRed, escape) }
+func Green(s, mod string, escape int) string  { return colorize(s, mod, cGreen, escape) }
+func Yellow(s, mod string, escape int) string { return colorize(s, mod, cYellow, escape) }
+func Blue(s, mod string, escape int) string   { return colorize(s, mod, cBlue, escape) }
+func Purple(s, mod string, escape int) string { return colorize(s, mod, cPurple, escape) }
+func Cyan(s, mod string, escape int) string   { return colorize(s, mod, cCyan, escape) }
+func White(s, mod string, escape int) string  { return colorize(s, mod, cWhite, escape) }
 
-func TRainbow(s, mod string, escape int) string {
+func Rainbow(s, mod string, escape int) string {
 	all_term_colors := []string{cBlue, cCyan, cGreen, cPurple, cRed, cYellow, cWhite}
 
 	var result string
@@ -86,12 +86,12 @@ func TRainbow(s, mod string, escape int) string {
 
 /*
 func AddMod(s, mod string) string
-func TRed(s string, mod string, escape int) string
-func TGreen(s string, mod string, escape int) string
-func TYellow(s string, mod string, escape int) string
-func TBlue(s string, mod string, escape int) string
-func TPurple(s string, mod string, escape int) string
-func TCyan(s string, mod string, escape int) string
-func TWhite(s string, mod string, escape int) string
-func TRainbow(s, mod string, escape int) string
+func Red(s string, mod string, escape int) string
+func Green(s string, mod string, escape int) string
+func Yellow(s string, mod string, escape int) string
+func Blue(s string, mod string, escape int) string
+func Purple(s string, mod string, escape int) string
+func Cyan(s string, mod string, escape int) string
+func White(s string, mod string, escape int) string
+func Rainbow(s, mod string, escape int) string
 */
