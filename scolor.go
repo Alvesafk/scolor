@@ -85,6 +85,36 @@ var (
 	WHITE  = Color{Red: 255, Green: 255, Blue: 255}
 )
 
+type RgbTemplate struct {
+	Bg, Fg Color
+}
+
+func CreateRgbTemplate(bg, fg Color) *RgbTemplate {
+	return &RgbTemplate{Bg: bg, Fg: fg}
+}
+
+func (template RgbTemplate) Println(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgRGB(FgRGB(fmt.Sprint(v), template.Fg), template.Bg)
+	}
+
+	return fmt.Fprintln(os.Stdout, colored...)
+}
+
+func (template RgbTemplate) Print(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgRGB(FgRGB(fmt.Sprint(v), template.Fg), template.Bg)
+	}
+
+	return fmt.Fprint(os.Stdout, colored...)
+}
+
+func (template RgbTemplate) Printf(format string, a ...any) (n int, err error) {
+	return fmt.Fprintf(os.Stdout, BgRGB(FgRGB(format, template.Fg), template.Bg), a...)
+}
+
 /*
 INDEX:
 type Color struct
