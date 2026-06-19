@@ -5,6 +5,7 @@ Author © 2026 alvesafk <migueldealmeidaalves55@gmail.com>
 package scolor
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -37,7 +38,7 @@ func AddMod(s, mod string) string {
 }
 
 func colorize(s, mod, code string, escape int) string {
-	r := code + AddMod(s, mod) + reset
+	r := fmt.Sprintf("%s%s%s", code, AddMod(s, mod), reset)
 	if escape > 0 {
 		r += strings.Repeat("\n", escape)
 	}
