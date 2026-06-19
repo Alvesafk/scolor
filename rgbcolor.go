@@ -2,10 +2,57 @@ package scolor
 
 import (
 	"fmt"
+	"os"
 )
 
 type Color struct {
 	Red, Green, Blue uint8
+}
+
+// Bg Print
+func (color Color) BgPrintln(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgRGB(fmt.Sprint(v), color)
+	}
+
+	return fmt.Fprintln(os.Stdout, colored...)
+}
+
+func (color Color) BgPrint(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgRGB(fmt.Sprint(v), color)
+	}
+
+	return fmt.Fprint(os.Stdout, colored...)
+}
+
+func (color Color) BgPrintf(format string, a ...any) (n int, err error) {
+	return fmt.Fprintf(os.Stdout, BgRGB(format, color), a...)
+}
+
+// FG print
+func (color Color) FgPrintln(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = FgRGB(fmt.Sprint(v), color)
+	}
+
+	return fmt.Fprintln(os.Stdout, colored...)
+}
+
+func (color Color) FgPrint(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = FgRGB(fmt.Sprint(v), color)
+	}
+
+	return fmt.Fprint(os.Stdout, colored...)
+}
+
+func (color Color) FgPrintf(format string, a ...any) (n int, err error) {
+	return fmt.Fprintf(os.Stdout, FgRGB(format, color), a...)
 }
 
 var (

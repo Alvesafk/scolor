@@ -83,6 +83,7 @@ func TRainbow(s, mod string, escape int) string {
 
 	return result
 }
+
 /*
 func AddMod(s, mod string) string
 func TRed(s string, mod string, escape int) string
