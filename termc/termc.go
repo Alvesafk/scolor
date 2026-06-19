@@ -6,56 +6,86 @@ package termc
 
 import (
 	"fmt"
+	"os"
 	"strings"
+
+	"github.com/Alvesafk/scolor"
 )
 
 const (
 	reset   = "\033[0m"
-	cRed    = "\033[31m"
-	cGreen  = "\033[32m"
-	cYellow = "\033[33m"
-	cBlue   = "\033[34m"
-	cPurple = "\033[35m"
-	cCyan   = "\033[36m"
-	cWhite  = "\033[37m"
 )
 
-func AddMod(s, mod string) string {
-	switch mod {
-	case "bold":
-		s = "\033[1m" + s
-	case "underline":
-		s = "\033[4m" + s
-	case "strike":
-		s = "\033[9m" + s
-	case "italic":
-		s = "\033[3m" + s
-	default:
-		return s
-	}
-
-	return s
+type ansiColor struct {
+	bg, fg string
 }
 
-func colorize(s, mod, code string, escape int) string {
-	r := fmt.Sprintf("%s%s%s", code, AddMod(s, mod), reset)
-	if escape > 0 {
-		r += strings.Repeat("\n", escape)
+var (
+	ARed    = ansiColor{bg: "\033[41m", fg: "\033[31m"}
+	AGreen  = ansiColor{bg: "\033[42m", fg: "\033[32m"}
+	AYellow = ansiColor{bg: "\033[43m", fg: "\033[33m"}
+	ABlue   = ansiColor{bg: "\033[44m", fg: "\033[34m"}
+	APurple = ansiColor{bg: "\033[45m", fg: "\033[35m"}
+	ACyan   = ansiColor{bg: "\033[46m", fg: "\033[36m"}
+	AWhite  = ansiColor{bg: "\033[47m", fg: "\033[37m"}
+)
+
+// bg
+func (color ansiColor) BgPrintln(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgAnsi(fmt.Sprint(v), color)
 	}
 
-	return r
+	return fmt.Fprintln(os.Stdout, colored...)
 }
 
-func Red(s, mod string, escape int) string    { return colorize(s, mod, cRed, escape) }
-func Green(s, mod string, escape int) string  { return colorize(s, mod, cGreen, escape) }
-func Yellow(s, mod string, escape int) string { return colorize(s, mod, cYellow, escape) }
-func Blue(s, mod string, escape int) string   { return colorize(s, mod, cBlue, escape) }
-func Purple(s, mod string, escape int) string { return colorize(s, mod, cPurple, escape) }
-func Cyan(s, mod string, escape int) string   { return colorize(s, mod, cCyan, escape) }
-func White(s, mod string, escape int) string  { return colorize(s, mod, cWhite, escape) }
+func (color ansiColor) BgPrint(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgAnsi(fmt.Sprint(v), color)
+	}
+
+	return fmt.Fprint(os.Stdout, colored...)
+}
+
+func (color ansiColor) BgPrintf(format string, a ...any) (n int, err error) {
+	return fmt.Fprintf(os.Stdout, BgAnsi(format, color), a...)
+}
+
+// fg
+func (color ansiColor) FgPrintln(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = FgAnsi(fmt.Sprint(v), color)
+	}
+
+	return fmt.Fprintln(os.Stdout, colored...)
+}
+
+func (color ansiColor) FgPrint(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = FgAnsi(fmt.Sprint(v), color)
+	}
+
+	return fmt.Fprint(os.Stdout, colored...)
+}
+
+func (color ansiColor) FgPrintf(format string, a ...any) (n int, err error) {
+	return fmt.Fprintf(os.Stdout, FgAnsi(format, color), a...)
+}
+
+func FgAnsi(s string, color ansiColor) string {
+	return fmt.Sprintf("%s%s%s", color.fg, s, reset)
+}
+
+func BgAnsi(s string, color ansiColor) string {
+	return fmt.Sprintf("%s%s%s", color.bg, s, reset)
+}
 
 func Rainbow(s, mod string, escape int) string {
-	all_term_colors := []string{cBlue, cCyan, cGreen, cPurple, cRed, cYellow, cWhite}
+	all_term_colors := []string{ABlue.fg, ACyan.fg, AGreen.fg, APurple.fg, ARed.fg, AYellow.fg, AWhite.fg}
 
 	var result string
 
@@ -75,7 +105,7 @@ func Rainbow(s, mod string, escape int) string {
 		cc++
 	}
 
-	result = AddMod(result, mod)
+	result = scolor.AddMod(result, mod)
 
 	if escape > 0 {
 		result += strings.Repeat("\n", escape)
