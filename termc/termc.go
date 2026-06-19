@@ -2,7 +2,7 @@
 Author © 2026 alvesafk <migueldealmeidaalves55@gmail.com>
 */
 
-package scolor
+package termc
 
 import (
 	"fmt"
