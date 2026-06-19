@@ -55,20 +55,6 @@ func (color Color) FgPrintf(format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, FgRGB(format, color), a...)
 }
 
-var (
-	RED    = Color{Red: 200, Green: 0, Blue: 0}
-	GREEN  = Color{Red: 0, Green: 200, Blue: 0}
-	BLUE   = Color{Red: 0, Green: 0, Blue: 200}
-	YELLOW = Color{Red: 200, Green: 200, Blue: 0}
-	ORANGE = Color{Red: 200, Green: 115, Blue: 0}
-	PURPLE = Color{Red: 80, Green: 0, Blue: 80}
-	PINK   = Color{Red: 200, Green: 140, Blue: 150}
-	BROWN  = Color{Red: 110, Green: 20, Blue: 20}
-	BLACK  = Color{Red: 0, Green: 0, Blue: 0}
-	WHITE  = Color{Red: 255, Green: 255, Blue: 255}
-	CYAN   = Color{Red: 0, Green: 200, Blue: 200}
-)
-
 func FgRGB(s string, color Color) string {
 	return fmt.Sprintf("\x1b[38;2;%d;%d;%dm%s\x1b[0m", color.Red, color.Green, color.Blue, s)
 }
@@ -76,3 +62,41 @@ func FgRGB(s string, color Color) string {
 func BgRGB(s string, color Color) string {
 	return fmt.Sprintf("\x1b[48;2;%d;%d;%dm%s\x1b[0m", color.Red, color.Green, color.Blue, s)
 }
+
+var (
+	BLACK  = Color{Red: 0, Green: 0, Blue: 0}
+	BLUE   = Color{Red: 0, Green: 0, Blue: 200}
+	BROWN  = Color{Red: 110, Green: 20, Blue: 20}
+	CYAN   = Color{Red: 0, Green: 200, Blue: 200}
+	GREEN  = Color{Red: 0, Green: 200, Blue: 0}
+	ORANGE = Color{Red: 200, Green: 115, Blue: 0}
+	PINK   = Color{Red: 200, Green: 140, Blue: 150}
+	PURPLE = Color{Red: 80, Green: 0, Blue: 80}
+	RED    = Color{Red: 200, Green: 0, Blue: 0}
+	YELLOW = Color{Red: 200, Green: 200, Blue: 0}
+	WHITE  = Color{Red: 255, Green: 255, Blue: 255}
+)
+
+/*
+INDEX:
+type Color struct
+func (color Color) BgPrintln(a ...any) (n int, err error)
+func (color Color) BgPrint(a ...any) (n int, err error)
+func (color Color) BgPrintf(format string, a ...any) (n int, err error)
+func (color Color) FgPrintln(a ...any) (n int, err error)
+func (color Color) FgPrint(a ...any) (n int, err error)
+func (color Color) FgPrintf(format string, a ...any) (n int, err error)
+func FgRGB(s string, color Color) string
+func BgRGB(s string, color Color) string
+var BLACK Color
+var BLUE Color
+var BROWN Color
+var CYAN Color
+var GREEN Color
+var ORANGE Color
+var PINK Color
+var PURPLE Color
+var RED Color
+var YELLOW Color
+var WHITE Color
+*/
