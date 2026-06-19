@@ -2,7 +2,7 @@
 Author © 2026 alvesafk <migueldealmeidaalves55@gmail.com>
 */
 
-package termc
+package ansi
 
 import (
 	"fmt"
@@ -82,6 +82,36 @@ func FgAnsi(s string, color ansiColor) string {
 
 func BgAnsi(s string, color ansiColor) string {
 	return fmt.Sprintf("%s%s%s", color.bg, s, reset)
+}
+
+type AnsiTemplate struct {
+	Bg, Fg ansiColor
+}
+
+func CreateAnsiTemplate(bg, fg ansiColor) *AnsiTemplate {
+	return &AnsiTemplate{Bg: bg, Fg: fg}
+}
+
+func (template AnsiTemplate) Println(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgAnsi(FgAnsi(fmt.Sprint(v), template.Fg), template.Bg)
+	}
+
+	return fmt.Fprintln(os.Stdout, colored...)
+}
+
+func (template AnsiTemplate) Print(a ...any) (n int, err error) {
+	colored := make([]any, len(a))
+	for i, v := range a {
+		colored[i] = BgAnsi(FgAnsi(fmt.Sprint(v), template.Fg), template.Bg)
+	}
+
+	return fmt.Fprint(os.Stdout, colored...)
+}
+
+func (template AnsiTemplate) Printf(format string, a ...any) (n int, err error) {
+	return fmt.Fprintf(os.Stdout, BgAnsi(FgAnsi(format, template.Fg), template.Bg), a...)
 }
 
 func Rainbow(s, mod string, escape int) string {
