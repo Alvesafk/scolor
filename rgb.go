@@ -9,6 +9,10 @@ type Color struct {
 	Red, Green, Blue uint8
 }
 
+func RGB(red, green, blue uint8) Color {
+	return Color{Red: red, Green: green, Blue: blue}
+}
+
 // Bg Print
 func (color Color) BgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
