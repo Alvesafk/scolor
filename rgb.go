@@ -56,17 +56,17 @@ func (color Color) FgPrintf(format string, a ...any) (n int, err error) {
 }
 
 var (
-	RED    = Color{Red: 255, Green: 0, Blue: 0}
-	GREEN  = Color{Red: 0, Green: 255, Blue: 0}
-	BLUE   = Color{Red: 0, Green: 0, Blue: 255}
-	YELLOW = Color{Red: 255, Green: 255, Blue: 0}
-	ORANGE = Color{Red: 255, Green: 165, Blue: 0}
-	PURPLE = Color{Red: 128, Green: 0, Blue: 128}
-	PINK   = Color{Red: 255, Green: 192, Blue: 203}
-	BROWN  = Color{Red: 164, Green: 42, Blue: 42}
+	RED    = Color{Red: 200, Green: 0, Blue: 0}
+	GREEN  = Color{Red: 0, Green: 200, Blue: 0}
+	BLUE   = Color{Red: 0, Green: 0, Blue: 200}
+	YELLOW = Color{Red: 200, Green: 200, Blue: 0}
+	ORANGE = Color{Red: 200, Green: 115, Blue: 0}
+	PURPLE = Color{Red: 80, Green: 0, Blue: 80}
+	PINK   = Color{Red: 200, Green: 140, Blue: 150}
+	BROWN  = Color{Red: 110, Green: 20, Blue: 20}
 	BLACK  = Color{Red: 0, Green: 0, Blue: 0}
 	WHITE  = Color{Red: 255, Green: 255, Blue: 255}
-	CYAN   = Color{Red: 0, Green: 255, Blue: 255}
+	CYAN   = Color{Red: 0, Green: 200, Blue: 200}
 )
 
 func FgRGB(s string, color Color) string {
