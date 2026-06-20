@@ -7,7 +7,37 @@ package scolor
 import (
 	"fmt"
 	"os"
+	"strings"
+	"syscall"
+	"unsafe"
 )
+
+var IsRGBSupported bool
+
+func init() {
+	IsRGBSupported = isTTY() && hasTrueColor()
+}
+
+func isTTY() bool {
+	var termios syscall.Termios
+	_, _, errno := syscall.Syscall(
+		syscall.SYS_IOCTL,
+		os.Stdout.Fd(),
+		syscall.TCGETS,
+		uintptr(unsafe.Pointer(&termios)),
+	)
+
+	return errno == 0
+}
+
+func hasTrueColor() bool {
+	if !isTTY() {
+		return false
+	}
+
+	colorterm := strings.ToLower(os.Getenv("COLORTERM"))
+	return colorterm == "truecolor" || colorterm == "24bit"
+}
 
 type Color struct {
 	Red, Green, Blue uint8
