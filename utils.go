@@ -1,5 +1,14 @@
+/*
+Author © 2026 alvesafk <migueldealmeidaalves55@gmail.com>
+
+utils.go is for functions that work in generic form, meaning they work for both the scolor
+main package (RGB) and the ansi package.
+*/
 package scolor
 
+// func AddMod receives a string to be modified and a mod string, it returns the modified
+// string, the mods are: "bold", "underline", "strike", "italic", if the mod string is
+// different than this the function returns the string to be modified.
 func AddMod(s, mod string) string {
 	switch mod {
 	case "bold":
@@ -16,3 +25,8 @@ func AddMod(s, mod string) string {
 
 	return s
 }
+
+/*
+INDEX:
+func AddMod(s, mod string) string
+*/
