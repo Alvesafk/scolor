@@ -22,7 +22,7 @@ Inside the source code there is an examples directory with code for the main `sc
 
 Roadmap:
 - [ ] Gradient formatting
-- [ ] Tests
+- [x] Tests
 - [ ] Better examples
 
 This library was released with the MIT license.
