@@ -14,7 +14,6 @@ func main() {
 	red := scolor.RED
 	yellow := scolor.YELLOW
 
-
 	blue.FgPrintln("Hello, world! Using the RGB Blue!")
 	blue.BgPrintln("Hello, world! Using the RGB Blue!")
 	time.Sleep(1 * time.Second / 2)

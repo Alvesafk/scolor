@@ -61,10 +61,10 @@ func TestBgAnsi_EmptyString(t *testing.T) {
 // Preset ANSI colros - code values
 
 func TestPresetAnsiColors_FgCodes(t *testing.T) {
-	tests := []struct{
-		name string
+	tests := []struct {
+		name  string
 		color ansiColor
-		fg string
+		fg    string
 	}{
 		{"ARed", ARed, "\033[31m"},
 		{"AGreen", AGreen, "\033[32m"},
@@ -86,10 +86,10 @@ func TestPresetAnsiColors_FgCodes(t *testing.T) {
 }
 
 func TestPresetAnsiColors_BgCodes(t *testing.T) {
-	tests := []struct{
-		name string
+	tests := []struct {
+		name  string
 		color ansiColor
-		bg string
+		bg    string
 	}{
 		{"ARed", ARed, "\033[41m"},
 		{"AGreen", AGreen, "\033[42m"},
@@ -198,7 +198,7 @@ func TestRainbow_Mod_Bold(t *testing.T) {
 }
 
 func TestRainbow_Mod_Unknown_DoesNotPanic(t *testing.T) {
-	defer func(){
+	defer func() {
 		if r := recover(); r != nil {
 			t.Errorf("Rainbow panicked with unknown mod: %v", r)
 		}

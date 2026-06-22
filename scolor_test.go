@@ -181,7 +181,7 @@ func TestRgbTemplate_FormatString_LayerOrder(t *testing.T) {
 	}
 }
 
-// enviroment awarness
+// environment awarness
 
 func TestIsTTY_ReturnsBool(t *testing.T) {
 	result := isTTY()

@@ -16,7 +16,7 @@ import (
 
 // const declaration for the reset ansi escape sequence.
 const (
-	reset   = "\033[0m"
+	reset = "\033[0m"
 )
 
 // ansiColor struct is a private struct with the ansi codes for background and foreground
@@ -203,11 +203,11 @@ func (template AnsiTemplate) FormatString(s string) string
 func Rainbow(s, mod string, escape int) string
 
 var
-	ARed   
-	AGreen 
+	ARed
+	AGreen
 	AYellow
-	ABlue  
+	ABlue
 	APurple
-	ACyan  
-	AWhite 
+	ACyan
+	AWhite
 */
