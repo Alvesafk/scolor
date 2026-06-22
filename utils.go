@@ -1,5 +1,7 @@
 package scolor
 
+import "regexp"
+
 // func AddMod receives a string to be modified and a mod string, it returns the modified
 // string, the mods are: "bold", "underline", "strike", "italic", if the mod string is
 // different than this the function returns the string to be modified.
@@ -18,6 +20,13 @@ func AddMod(s, mod string) string {
 	}
 
 	return s
+}
+
+// func RemoveEscapeSequence receives a string and returns the same string withou the escape
+// sequences if any.
+func RemoveEscapeSequence(s string) string {
+	escape := regexp.MustCompile(`\x1b\[[0-9;]*m`)
+	return escape.ReplaceAllString(s, "")
 }
 
 /*
