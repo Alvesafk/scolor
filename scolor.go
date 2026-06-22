@@ -50,11 +50,15 @@ func hasTrueColor() bool {
 
 // Color struct, it defines a 24bit RGB color, it has Red, Green and Blue uint8 fields.
 type Color struct {
-	Red, Green, Blue uint8
+	Red, Green, Blue int
 }
 
 // func RGB receives a red, green and blue uint8 and returns a instantiated Color struct.
-func RGB(red, green, blue uint8) Color {
+func RGB(red, green, blue int) Color {
+	if red > 255 || green > 255 || blue > 255 {
+		return Color{}
+	}
+
 	return Color{Red: red, Green: green, Blue: blue}
 }
 
@@ -124,6 +128,74 @@ func FgRGB(s string, color Color) string {
 // colored.
 func BgRGB(s string, color Color) string {
 	return fmt.Sprintf("\x1b[48;2;%d;%d;%dm%s\x1b[0m", color.Red, color.Green, color.Blue, s)
+}
+
+// func FgGradient receives a string an two colors, it returns a string whose foreground is
+// colored with a gradient, starting in the first color going to the second color.
+func FgGradient(s string, firstColor, secondColor Color) string {
+	fRed := firstColor.Red
+	fGreen := firstColor.Green
+	fBlue := firstColor.Blue
+
+	redMod := (secondColor.Red - firstColor.Red) / len(s)
+	greenMod := (secondColor.Green - firstColor.Green) / len(s)
+	blueMod := (secondColor.Blue - firstColor.Blue) / len(s)
+
+	var result string
+	for _, c := range s {
+		result += FgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue})
+
+		fRed += redMod
+		if fRed > 255 {
+			fRed = 255
+		}
+
+		fGreen += greenMod
+		if fGreen > 255 {
+			fGreen = 255
+		}
+
+		fBlue += blueMod
+		if fBlue > 255 {
+			fBlue = 255
+		}
+	}
+
+	return result
+}
+
+// func BgGradient receives a string an two colors, it returns a string whose background is
+// colored with a gradient, starting in the first color going to the second color.
+func BgGradient(s string, firstColor, secondColor Color) string {
+	fRed := firstColor.Red
+	fGreen := firstColor.Green
+	fBlue := firstColor.Blue
+
+	redMod := (secondColor.Red - firstColor.Red) / len(s)
+	greenMod := (secondColor.Green - firstColor.Green) / len(s)
+	blueMod := (secondColor.Blue - firstColor.Blue) / len(s)
+
+	var result string
+	for _, c := range s {
+		result += BgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue})
+
+		fRed += redMod
+		if fRed > 255 {
+			fRed = 255
+		}
+
+		fGreen += greenMod
+		if fGreen > 255 {
+			fGreen = 255
+		}
+
+		fBlue += blueMod
+		if fBlue > 255 {
+			fBlue = 255
+		}
+	}
+
+	return result
 }
 
 // Some preset colors, they all can be changed by the user of the lib.
@@ -198,7 +270,7 @@ func (color Color) FgPrint(a ...any) (n int, err error)
 func (color Color) FgPrintf(format string, a ...any) (n int, err error)
 func FgRGB(s string, color Color) string
 func BgRGB(s string, color Color) string
-type RgbTemplate struct 
+type RgbTemplate struct
 func CreateRgbTemplate(bg, fg Color) *RgbTemplate
 func (template RgbTemplate) Println(a ...any) (n int, err error)
 func (template RgbTemplate) Print(a ...any) (n int, err error)

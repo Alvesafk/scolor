@@ -16,13 +16,13 @@ func TestRGB(t *testing.T) {
 	c := RGB(10, 20, 30)
 	if c.Red != 10 || c.Green != 20 || c.Blue != 30 {
 		t.Errorf("RGB(10,20,30) = {%d,%d,%d}, want {10,20,30}",
-		c.Red, c.Green, c.Blue)
+			c.Red, c.Green, c.Blue)
 	}
 }
 
 func TestRGB_Boundaries(t *testing.T) {
-	black := RGB(0,0,0)
-	white := RGB(255,255,255)
+	black := RGB(0, 0, 0)
+	white := RGB(255, 255, 255)
 
 	if black.Red != 0 || black.Green != 0 || black.Blue != 0 {
 		t.Errorf("RGB(0,0,0): unexpected values")
@@ -94,8 +94,8 @@ func TestBgRGB_EmptyString(t *testing.T) {
 
 func TestPresetColors(t *testing.T) {
 	tests := []struct {
-		name string
-		color Color
+		name    string
+		color   Color
 		r, g, b uint8
 	}{
 		{"BLACK", BLACK, 0, 0, 0},
@@ -181,7 +181,7 @@ func TestRgbTemplate_FormatString_LayerOrder(t *testing.T) {
 	}
 }
 
-// enviroment awarness 
+// enviroment awarness
 
 func TestIsTTY_ReturnsBool(t *testing.T) {
 	result := isTTY()
