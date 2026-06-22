@@ -259,6 +259,65 @@ func (template RgbTemplate) FormatString(s string) string {
 	return BgRGB(FgRGB(s, template.Fg), template.Bg)
 }
 
+// func TmplGradient accepts a string and two templates, it returns a colored string with
+// a back and foreground gradient of the templates, the gradient begins with the first one
+// and goes to the second one.
+func TmplGradient(s string, firstTemplate, secondTemplate RgbTemplate) string {
+	fFgRed := firstTemplate.Fg.Red
+	fFgGreen := firstTemplate.Fg.Green
+	fFgBlue := firstTemplate.Fg.Blue
+
+	fBgRed := firstTemplate.Bg.Red
+	fBgGreen := firstTemplate.Bg.Green
+	fBgBlue := firstTemplate.Bg.Blue
+
+	fgRedMod := (secondTemplate.Fg.Red - firstTemplate.Fg.Red) / len(s)
+	fgGreenMod := (secondTemplate.Fg.Green - firstTemplate.Fg.Green) / len(s)
+	fgBlueMod := (secondTemplate.Fg.Blue - firstTemplate.Fg.Blue) / len(s)
+
+	bgRedMod := (secondTemplate.Bg.Red - firstTemplate.Bg.Red) / len(s)
+	bgGreenMod := (secondTemplate.Bg.Green - firstTemplate.Bg.Green) / len(s)
+	bgBlueMod := (secondTemplate.Bg.Blue - firstTemplate.Bg.Blue) / len(s)
+
+	var result string
+	for _, c := range s {
+		result += BgRGB(FgRGB(string(c), Color{Red: fFgRed, Green: fFgGreen, Blue: fFgBlue}),
+			Color{Red: fBgRed, Green: fBgGreen, Blue: fBgBlue})
+
+		fFgRed += fgRedMod
+		if fFgRed > 255 {
+			fFgRed = 255
+		}
+
+		fBgRed += bgRedMod
+		if fBgRed > 255 {
+			fBgRed = 255
+		}
+
+		fFgGreen += fgGreenMod
+		if fFgGreen > 255 {
+			fFgGreen = 255
+		}
+
+		fBgGreen += bgGreenMod
+		if fBgGreen > 255 {
+			fBgGreen = 255
+		}
+
+		fFgBlue += fgBlueMod
+		if fFgBlue > 255 {
+			fFgBlue = 255
+		}
+
+		fBgBlue += bgBlueMod
+		if fBgBlue > 255 {
+			fBgBlue = 255
+		}
+	}
+
+	return result
+}
+
 /*
 INDEX:
 type Color struct
@@ -270,10 +329,13 @@ func (color Color) FgPrint(a ...any) (n int, err error)
 func (color Color) FgPrintf(format string, a ...any) (n int, err error)
 func FgRGB(s string, color Color) string
 func BgRGB(s string, color Color) string
+func FgGradient(s string, firstColor, secondColor Color) string
+func BgGradient(s string, firstColor, secondColor Color) string
 type RgbTemplate struct
 func CreateRgbTemplate(bg, fg Color) *RgbTemplate
 func (template RgbTemplate) Println(a ...any) (n int, err error)
 func (template RgbTemplate) Print(a ...any) (n int, err error)
 func (template RgbTemplate) Printf(format string, a ...any) (n int, err error)
 func (template RgbTemplate) FormatString(s string) string
+func TmplGradient(s string, firstTemplate, secondTemplate RgbTemplate) string
 */
