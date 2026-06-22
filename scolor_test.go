@@ -96,7 +96,7 @@ func TestPresetColors(t *testing.T) {
 	tests := []struct {
 		name    string
 		color   Color
-		r, g, b uint8
+		r, g, b int
 	}{
 		{"BLACK", BLACK, 0, 0, 0},
 		{"WHITE", WHITE, 255, 255, 255},

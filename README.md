@@ -21,7 +21,7 @@ The documentation can be found by using the `go doc` command on the codebase, yo
 Inside the source code there is an examples directory with code for the main `scolor` package and the `ansi` package, just use `go run` on them.
 
 Roadmap:
-- [ ] Gradient formatting
+- [x] Gradient formatting
 - [x] Tests
 - [ ] Better examples
 
