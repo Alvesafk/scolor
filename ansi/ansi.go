@@ -4,7 +4,6 @@ Author © 2026 alvesafk <migueldealmeidaalves55@gmail.com>
 ansi package is a separte package of scolor, the package uses the ansi colors of the user
 terminal instead of the RGB colors of the main package.
 */
-
 package ansi
 
 import (

@@ -1,9 +1,3 @@
-/*
-Author © 2026 alvesafk <migueldealmeidaalves55@gmail.com>
-
-utils.go is for functions that work in generic form, meaning they work for both the scolor
-main package (RGB) and the ansi package.
-*/
 package scolor
 
 // func AddMod receives a string to be modified and a mod string, it returns the modified

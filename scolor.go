@@ -48,7 +48,7 @@ func hasTrueColor() bool {
 	return colorterm == "truecolor" || colorterm == "24bit"
 }
 
-// Color struct, it defines a 24bit RGB color, it has Red, Green and Blue uint8 fields.
+// Color struct, it defines a 24bit RGB color, it has Red, Green and Blue fields.
 type Color struct {
 	Red, Green, Blue int
 }
