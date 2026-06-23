@@ -27,6 +27,7 @@ type ansiColor struct {
 
 // The default ansi terminal colors.
 var (
+	ABlack  = ansiColor{bg: "\033[40m", fg: "\033[30m"}
 	ARed    = ansiColor{bg: "\033[41m", fg: "\033[31m"}
 	AGreen  = ansiColor{bg: "\033[42m", fg: "\033[32m"}
 	AYellow = ansiColor{bg: "\033[43m", fg: "\033[33m"}
@@ -152,7 +153,7 @@ func (template AnsiTemplate) FormatString(s string) string {
 
 // func Rainbow receives a string to modify, a mod string and the amount of new lines, it
 // returns a "rainbow" string based on the ansi colors.
-func Rainbow(s, mod string, escape int) string {
+func FgRainbow(s, mod string, escape int) string {
 	all_term_colors := []string{ABlue.fg, ACyan.fg, AGreen.fg, APurple.fg, ARed.fg, AYellow.fg, AWhite.fg}
 
 	var result string
@@ -182,6 +183,33 @@ func Rainbow(s, mod string, escape int) string {
 	return result
 }
 
+func BgRainbow(s, mod string, escape int) string {
+	all_term_colors := []string{ABlue.bg, ACyan.bg, AGreen.bg, APurple.bg, ARed.bg, AYellow.bg, AWhite.bg}
+
+	var result string
+
+	var cc int
+	for _, c := range s {
+		if cc >= 7 {
+			cc = 0
+		}
+
+		result += all_term_colors[cc] + string(c)
+
+		cc++
+	}
+
+	result = scolor.AddMod(result, mod)
+
+	if escape > 0 {
+		result += strings.Repeat("\n", escape)
+	}
+
+	result = FgAnsi(result, ABlack)
+
+	return result
+}
+
 /*
 INDEX:
 const reset
@@ -200,7 +228,8 @@ func (template AnsiTemplate) Println(a ...any) (n int, err error)
 func (template AnsiTemplate) Print(a ...any) (n int, err error)
 func (template AnsiTemplate) Printf(a ...any) (n int, err error)
 func (template AnsiTemplate) FormatString(s string) string
-func Rainbow(s, mod string, escape int) string
+func FgRainbow(s, mod string, escape int) string
+func BgRainbow(s, mod string, escape int) string
 
 var
 	ARed
