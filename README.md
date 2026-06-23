@@ -18,11 +18,11 @@ Just run `go mod tidy` after this and the lib will be available in your code.
 
 The documentation can be found by using the `go doc` command on the codebase, you can also read it directly from the source code, or, read it on the official go pkgs website.
 
-Inside the source code there is an examples directory with code for the main `scolor` package and the `ansi` package, just use `go run` on them.
+Inside the source code there is an examples directory with code for the main `scolor` package and the `ansi` package, you can test them with `go run` or just see the gif on their READMEs.
 
 Roadmap:
 - [x] Gradient formatting
 - [x] Tests
-- [ ] Better examples
+- [x] Better examples
 
 This library was released with the MIT license.
