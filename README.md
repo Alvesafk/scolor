@@ -1,5 +1,7 @@
 # String colorizer - scolor
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/Alvesafk/scolor)](https://goreportcard.com/report/github.com/Alvesafk/scolor)
+
 scolor is a lib made for **Go** making it easier to use colorized strings in your programs.
 
 Was originally made inside of another project of mine, [agopass](https://github.com/Alvesafk/agopass), i decided to make it separate from the orginal project because i will be using it on other projects, specially because this version is way better then the original.
