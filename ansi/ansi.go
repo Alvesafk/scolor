@@ -39,6 +39,10 @@ var (
 
 // func BgPrintln is a ansiColor method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Println function.
+//
+// Usage:
+//
+// ACyan.BgPrintln("Hello, ", "World!")
 func (color ansiColor) BgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -50,6 +54,10 @@ func (color ansiColor) BgPrintln(a ...any) (n int, err error) {
 
 // func BgPrint is a ansiColor method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Print function.
+//
+// Usage:
+//
+// ACyan.BgPrintl"Hello, ", "World!")
 func (color ansiColor) BgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -61,12 +69,20 @@ func (color ansiColor) BgPrint(a ...any) (n int, err error) {
 
 // func BgPrintf is a ansiColor method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Printf function.
+//
+// Usage:
+//
+// ACyan.BgPrintf"Hello, ", "World!")
 func (color ansiColor) BgPrintf(format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, BgAnsi(format, color), a...)
 }
 
 // func FgPrintln is a ansiColor method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Println function.
+//
+// Usage:
+//
+// ACyan.FgPrintln"Hello, ", "World!")
 func (color ansiColor) FgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -78,6 +94,10 @@ func (color ansiColor) FgPrintln(a ...any) (n int, err error) {
 
 // func FgPrint is a ansiColor method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Print function.
+//
+// Usage:
+//
+// ACyan.FgPrint"Hello, ", "World!")
 func (color ansiColor) FgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -89,18 +109,30 @@ func (color ansiColor) FgPrint(a ...any) (n int, err error) {
 
 // func FgPrintf is a ansiColor method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Printf function.
+//
+// Usage:
+//
+// ACyan.FgPrintf"Hello, ", "World!")
 func (color ansiColor) FgPrintf(format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, FgAnsi(format, color), a...)
 }
 
 // func FgAnsi receives a string and a color, it returns a string which it's foreground is
 // colored.
+//
+// Usage:
+//
+// cyanFgString := FgAnsi("Hello, World!", ACyan)
 func FgAnsi(s string, color ansiColor) string {
 	return fmt.Sprintf("%s%s%s", color.fg, s, reset)
 }
 
 // func BgAnsi receives a string and a color, it returns a string which it's foreground is
 // colored.
+//
+// Usage:
+//
+// cyanBgString := BgAnsi("Hello, World!", ACyan)
 func BgAnsi(s string, color ansiColor) string {
 	return fmt.Sprintf("%s%s%s", color.bg, s, reset)
 }
@@ -113,12 +145,20 @@ type AnsiTemplate struct {
 
 // func CreateAnsiTemplate receives a background color and a foreground color, it returns a
 // initialized AnsiTemplate struct.
+//
+// Usage:
+//
+// whiteBgWithBlackFg := CreateAnsiTemplate(AWhite, ABlack)
 func CreateAnsiTemplate(bg, fg ansiColor) *AnsiTemplate {
 	return &AnsiTemplate{Bg: bg, Fg: fg}
 }
 
 // func Println is a AnsiTemplate method for printing text with the background and foreground
 // of the template onto the terminal, the use is identical to the fmt Println function.
+//
+// Usage:
+//
+// whiteBgWithBlackFg.Println("Hello, ", "World!")
 func (template AnsiTemplate) Println(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -130,6 +170,10 @@ func (template AnsiTemplate) Println(a ...any) (n int, err error) {
 
 // func Print is a AnsiTemplate method for printing text with the background and foreground
 // of the template onto the terminal, the use is identical to the fmt Print function.
+//
+// Usage:
+//
+// whiteBgWithBlackFg.Print("Hello, ", "World!")
 func (template AnsiTemplate) Print(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -141,18 +185,30 @@ func (template AnsiTemplate) Print(a ...any) (n int, err error) {
 
 // func Printf is a AnsiTemplate method for printing text with the background and foreground
 // of the template onto the terminal, the use is identical to the fmt Printf function.
+//
+// Usage:
+//
+// whiteBgWithBlackFg.Printf("Hello, ", "World!")
 func (template AnsiTemplate) Printf(format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, BgAnsi(FgAnsi(format, template.Fg), template.Bg), a...)
 }
 
 // func FormatString is a AnsiTemplate method, it receives a string and returns a formatted
 // string with the colors of the template.
+//
+// Usage:
+//
+// stringWhiteBgBlackFg := whiteBgWithBlackFg.FormatString("Hello, world!")
 func (template AnsiTemplate) FormatString(s string) string {
 	return BgAnsi(FgAnsi(s, template.Fg), template.Bg)
 }
 
-// func Rainbow receives a string to modify, a mod string and the amount of new lines, it
-// returns a "rainbow" string based on the ansi colors.
+// func FgRainbow receives a string to modify, a mod string and the amount of new lines, it
+// returns a string whose foreground is like a rainbow based on the ansi colors.
+//
+// Usage:
+//
+// rainbowFgString := FgRainbow("Hello, world!", "bold", "1")
 func FgRainbow(s, mod string, escape int) string {
 	all_term_colors := []string{ABlue.fg, ACyan.fg, AGreen.fg, APurple.fg, ARed.fg, AYellow.fg, AWhite.fg}
 
@@ -183,6 +239,12 @@ func FgRainbow(s, mod string, escape int) string {
 	return result
 }
 
+// func BgRainbow receives a string to modify, a mod string and the amount of new lines, it
+// returns a string whose background is like a rainbow based on the ansi colors.
+//
+// Usage:
+//
+// rainbowFgString := FgRainbow("Hello, world!", "bold", "1")
 func BgRainbow(s, mod string, escape int) string {
 	all_term_colors := []string{ABlue.bg, ACyan.bg, AGreen.bg, APurple.bg, ARed.bg, AYellow.bg, AWhite.bg}
 

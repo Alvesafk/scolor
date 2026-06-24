@@ -53,7 +53,13 @@ type Color struct {
 	Red, Green, Blue int
 }
 
-// func RGB receives a red, green and blue uint8 and returns a instantiated Color struct.
+// func RGB receives a red, green and blue int and returns a instantiated Color struct.
+// It will check if the value that is being passed is greater than 255 (8 bits), this is
+// done because RGB Colors are 24 bits, 8 bits (red) + 8 bits (green) + 8 bits (blue).
+//
+// Usage:
+//
+// pink := RGB(215, 106, 151)
 func RGB(red, green, blue int) Color {
 	if red > 255 || green > 255 || blue > 255 {
 		return Color{}
@@ -64,6 +70,10 @@ func RGB(red, green, blue int) Color {
 
 // func BgPrintln is a color method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Println function.
+//
+// Usage:
+//
+// pink.BgPrintln("Hello, ", "World")
 func (color Color) BgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -75,6 +85,10 @@ func (color Color) BgPrintln(a ...any) (n int, err error) {
 
 // func BgPrint is a color method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Print function.
+//
+// Usage:
+//
+// pink.BgPrint("Hello, ", "World")
 func (color Color) BgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -86,12 +100,20 @@ func (color Color) BgPrint(a ...any) (n int, err error) {
 
 // func BgPrintf is a color method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Printf function.
+//
+// Usage:
+//
+// pink.BgPrintf("Hello, ", "World")
 func (color Color) BgPrintf(format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, BgRGB(format, color), a...)
 }
 
 // func FgPrintln is a color method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Println function.
+//
+// Usage:
+//
+// pink.FgPrintln("Hello, ", "World")
 func (color Color) FgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -103,6 +125,10 @@ func (color Color) FgPrintln(a ...any) (n int, err error) {
 
 // func FgPrint is a color method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Print function.
+//
+// Usage:
+//
+// pink.FgPrint("Hello, ", "World")
 func (color Color) FgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -114,24 +140,40 @@ func (color Color) FgPrint(a ...any) (n int, err error) {
 
 // func FgPrintf is a color method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Printf function.
+//
+// Usage:
+//
+// pink.FgPrintf("Hello, ", "World")
 func (color Color) FgPrintf(format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, FgRGB(format, color), a...)
 }
 
 // func FgRGB receives a string and a color, it returns a string which it's foreground is
 // colored.
+//
+// Usage:
+//
+// pinkString := FgRGB("Hello, world!", pink)
 func FgRGB(s string, color Color) string {
 	return fmt.Sprintf("\x1b[38;2;%d;%d;%dm%s\x1b[0m", color.Red, color.Green, color.Blue, s)
 }
 
 // func BgRGB receives a string and a color, it returns a string which it's background is
 // colored.
+//
+// Usage:
+//
+// pinkString := BgRGB("Hello, world!", pink)
 func BgRGB(s string, color Color) string {
 	return fmt.Sprintf("\x1b[48;2;%d;%d;%dm%s\x1b[0m", color.Red, color.Green, color.Blue, s)
 }
 
-// func FgGradient receives a string an two colors, it returns a string whose foreground is
+// func FgGradient receives a string and two colors, it returns a string whose foreground is
 // colored with a gradient, starting in the first color going to the second color.
+//
+// Usage:
+//
+// pinkToBlueString := FgGradient("Hello, world!", pink, RGB(104, 150, 214))
 func FgGradient(s string, firstColor, secondColor Color) string {
 	fRed := firstColor.Red
 	fGreen := firstColor.Green
@@ -164,8 +206,12 @@ func FgGradient(s string, firstColor, secondColor Color) string {
 	return result
 }
 
-// func BgGradient receives a string an two colors, it returns a string whose background is
+// func BgGradient receives a string and two colors, it returns a string whose background is
 // colored with a gradient, starting in the first color going to the second color.
+//
+// Usage:
+//
+// pinkToBlueString := FgGradient("Hello, world!", pink, RGB(104, 150, 214))
 func BgGradient(s string, firstColor, secondColor Color) string {
 	fRed := firstColor.Red
 	fGreen := firstColor.Green
@@ -221,12 +267,20 @@ type RgbTemplate struct {
 
 // func CreateRgbTemplate receives a background color and a foreground color, it returns a
 // initialized RgbTemplate struct.
+//
+// Usage:
+//
+// whiteBgWithBlackFg := CreateRgbTemplate(RGB(255, 255, 255), RGB(0, 0, 0))
 func CreateRgbTemplate(bg, fg Color) *RgbTemplate {
 	return &RgbTemplate{Bg: bg, Fg: fg}
 }
 
 // func Println is a RgbTemplate method for printing text with the background and foreground
 // of the template onto the terminal, the use is identical to the fmt Println function.
+//
+// Usage:
+//
+// whiteBgWithBlackFg.Println("Hello, ", "World!")
 func (template RgbTemplate) Println(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -238,6 +292,10 @@ func (template RgbTemplate) Println(a ...any) (n int, err error) {
 
 // func Print is a RgbTemplate method for printing text with the background and foreground
 // of the template onto the terminal, the use is identical to the fmt Print function.
+//
+// Usage:
+//
+// whiteBgWithBlackFg.Print("Hello, ", "World!")
 func (template RgbTemplate) Print(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -249,19 +307,31 @@ func (template RgbTemplate) Print(a ...any) (n int, err error) {
 
 // func Printf is a RgbTemplate method for printing text with the background and foreground
 // of the template onto the terminal, the use is identical to the fmt Printf function.
+//
+// Usage:
+//
+// whiteBgWithBlackFg.Printf("Hello, ", "World!")
 func (template RgbTemplate) Printf(format string, a ...any) (n int, err error) {
 	return fmt.Fprintf(os.Stdout, BgRGB(FgRGB(format, template.Fg), template.Bg), a...)
 }
 
 // func FormatString is a RgbTemplate method, it receives a string and returns a formatted
 // string with the colors of the template.
+//
+// Usage;
+//
+// stringWithWhiteBgBlackFg := whiteBgWithBlackFg.FormatString("Hello, world!")
 func (template RgbTemplate) FormatString(s string) string {
 	return BgRGB(FgRGB(s, template.Fg), template.Bg)
 }
 
 // func TmplGradient accepts a string and two templates, it returns a colored string with
-// a back and foreground gradient of the templates, the gradient begins with the first one
+// a back and foreground gradient based on the templates, the gradient begins with the first one
 // and goes to the second one.
+//
+// Usage:
+//
+// stringWhiteToBlack := TmplGradient("Hello, world!", whiteBgWithBlackFg, blackBgWithWhiteFg)
 func TmplGradient(s string, firstTemplate, secondTemplate RgbTemplate) string {
 	fFgRed := firstTemplate.Fg.Red
 	fFgGreen := firstTemplate.Fg.Green

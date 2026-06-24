@@ -198,7 +198,7 @@ func TestFgRainbow_Mod_Bold(t *testing.T) {
 }
 
 func TestFgRainbow_Mod_Unknown_DoesNotPanic(t *testing.T) {
-	defer func(){
+	defer func() {
 		if r := recover(); r != nil {
 			t.Errorf("Rainbow panicked with unknown mod: %v", r)
 		}
@@ -261,7 +261,7 @@ func TestBgRainbow_Mod_Bold(t *testing.T) {
 }
 
 func TestBgRainbow_Mod_Unknown_DoesNotPanic(t *testing.T) {
-	defer func(){
+	defer func() {
 		if r := recover(); r != nil {
 			t.Errorf("Rainbow panicked with unknown mod: %v", r)
 		}
