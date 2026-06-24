@@ -168,6 +168,13 @@ func BgRGB(s string, color Color) string {
 	return fmt.Sprintf("\x1b[48;2;%d;%d;%dm%s\x1b[0m", color.Red, color.Green, color.Blue, s)
 }
 
+func check8Bit(cInt *int, cMod int) {
+	*cInt += cMod
+	if *cInt > 255 {
+		*cInt = 255
+	}
+}
+
 // func FgGradient receives a string and two colors, it returns a string whose foreground is
 // colored with a gradient, starting in the first color going to the second color.
 //
@@ -183,27 +190,16 @@ func FgGradient(s string, firstColor, secondColor Color) string {
 	greenMod := (secondColor.Green - firstColor.Green) / len(s)
 	blueMod := (secondColor.Blue - firstColor.Blue) / len(s)
 
-	var result string
+	var sb strings.Builder
 	for _, c := range s {
-		result += FgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue})
+		sb.WriteString(FgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue}))
 
-		fRed += redMod
-		if fRed > 255 {
-			fRed = 255
-		}
-
-		fGreen += greenMod
-		if fGreen > 255 {
-			fGreen = 255
-		}
-
-		fBlue += blueMod
-		if fBlue > 255 {
-			fBlue = 255
-		}
+		check8Bit(&fRed, redMod)
+		check8Bit(&fGreen, greenMod)
+		check8Bit(&fBlue, blueMod)
 	}
 
-	return result
+	return sb.String()
 }
 
 // func BgGradient receives a string and two colors, it returns a string whose background is
@@ -221,27 +217,16 @@ func BgGradient(s string, firstColor, secondColor Color) string {
 	greenMod := (secondColor.Green - firstColor.Green) / len(s)
 	blueMod := (secondColor.Blue - firstColor.Blue) / len(s)
 
-	var result string
+	var sb strings.Builder
 	for _, c := range s {
-		result += BgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue})
+		sb.WriteString(BgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue}))
 
-		fRed += redMod
-		if fRed > 255 {
-			fRed = 255
-		}
-
-		fGreen += greenMod
-		if fGreen > 255 {
-			fGreen = 255
-		}
-
-		fBlue += blueMod
-		if fBlue > 255 {
-			fBlue = 255
-		}
+		check8Bit(&fRed, redMod)
+		check8Bit(&fGreen, greenMod)
+		check8Bit(&fBlue, blueMod)
 	}
 
-	return result
+	return sb.String()
 }
 
 // Some preset colors, they all can be changed by the user of the lib.
@@ -349,43 +334,20 @@ func TmplGradient(s string, firstTemplate, secondTemplate RgbTemplate) string {
 	bgGreenMod := (secondTemplate.Bg.Green - firstTemplate.Bg.Green) / len(s)
 	bgBlueMod := (secondTemplate.Bg.Blue - firstTemplate.Bg.Blue) / len(s)
 
-	var result string
+	var sb strings.Builder
 	for _, c := range s {
-		result += BgRGB(FgRGB(string(c), Color{Red: fFgRed, Green: fFgGreen, Blue: fFgBlue}),
-			Color{Red: fBgRed, Green: fBgGreen, Blue: fBgBlue})
+		sb.WriteString(BgRGB(FgRGB(string(c), Color{Red: fFgRed, Green: fFgGreen, Blue: fFgBlue}),
+			Color{Red: fBgRed, Green: fBgGreen, Blue: fBgBlue}))
 
-		fFgRed += fgRedMod
-		if fFgRed > 255 {
-			fFgRed = 255
-		}
-
-		fBgRed += bgRedMod
-		if fBgRed > 255 {
-			fBgRed = 255
-		}
-
-		fFgGreen += fgGreenMod
-		if fFgGreen > 255 {
-			fFgGreen = 255
-		}
-
-		fBgGreen += bgGreenMod
-		if fBgGreen > 255 {
-			fBgGreen = 255
-		}
-
-		fFgBlue += fgBlueMod
-		if fFgBlue > 255 {
-			fFgBlue = 255
-		}
-
-		fBgBlue += bgBlueMod
-		if fBgBlue > 255 {
-			fBgBlue = 255
-		}
+		check8Bit(&fFgRed, fgRedMod)
+		check8Bit(&fBgRed, bgRedMod)
+		check8Bit(&fFgGreen, fgGreenMod)
+		check8Bit(&fBgGreen, bgGreenMod)
+		check8Bit(&fFgBlue, fgBlueMod)
+		check8Bit(&fBgBlue, bgBlueMod)
 	}
 
-	return result
+	return sb.String()
 }
 
 /*

@@ -159,7 +159,7 @@ func TestAnsiTemplate_FormatString(t *testing.T) {
 // Rainbow
 
 func TestFgRainbow_ContainsInput(t *testing.T) {
-	result := FgRainbow("hello", "", 0)
+	result := FgRainbow("hello")
 	for _, c := range "hello" {
 		if !strings.Contains(result, string(c)) {
 			t.Errorf("Rainbow: character %q missing from result", c)
@@ -168,47 +168,16 @@ func TestFgRainbow_ContainsInput(t *testing.T) {
 }
 
 func TestFgRainbow_SpacesUncolored(t *testing.T) {
-	result := FgRainbow("a b", "", 0)
+	result := FgRainbow("a b")
 
 	if !strings.Contains(result, " ") {
 		t.Error("Rainbow: space character missing from the result")
 	}
 }
 
-func TestFgRainbow_Escape_AddsNewLines(t *testing.T) {
-	result := FgRainbow("hi", "", 2)
-	count := strings.Count(result, "\n")
-	if count != 2 {
-		t.Errorf("Rainbow escape=2: expected 2 newlines, got %d", count)
-	}
-}
-
-func TestFgRainbow_ZeroEscape_NoNewLines(t *testing.T) {
-	result := FgRainbow("hi", "", 0)
-	if strings.Contains(result, "\n") {
-		t.Errorf("Rainbow escape=0: unexpected newline in result %q", result)
-	}
-}
-
-func TestFgRainbow_Mod_Bold(t *testing.T) {
-	result := FgRainbow("hi", "bold", 0)
-	if !strings.Contains(result, "\033[1m") {
-		t.Errorf("Rainbow bold: expected bold escape code, got %q", result)
-	}
-}
-
-func TestFgRainbow_Mod_Unknown_DoesNotPanic(t *testing.T) {
-	defer func() {
-		if r := recover(); r != nil {
-			t.Errorf("Rainbow panicked with unknown mod: %v", r)
-		}
-	}()
-	FgRainbow("hi", "unknown", 0)
-}
-
 func TestFgRainbow_ColorCycling(t *testing.T) {
 	long := "abcdefghij"
-	result := FgRainbow(long, "", 0)
+	result := FgRainbow(long)
 	for _, c := range long {
 		if !strings.Contains(result, string(c)) {
 			t.Errorf("Rainbow: char %q missing after color cycling", c)
@@ -217,12 +186,12 @@ func TestFgRainbow_ColorCycling(t *testing.T) {
 }
 
 func TestFgRainbow_EmptyString(t *testing.T) {
-	result := FgRainbow("", "", 0)
+	result := FgRainbow("")
 	_ = result
 }
 
 func TestBgRainbow_ContainsInput(t *testing.T) {
-	result := BgRainbow("hello", "", 0)
+	result := BgRainbow("hello")
 	for _, c := range "hello" {
 		if !strings.Contains(result, string(c)) {
 			t.Errorf("Rainbow: character %q missing from result", c)
@@ -231,47 +200,16 @@ func TestBgRainbow_ContainsInput(t *testing.T) {
 }
 
 func TestBgRainbow_SpacesUncolored(t *testing.T) {
-	result := BgRainbow("a b", "", 0)
+	result := BgRainbow("a b")
 
 	if !strings.Contains(result, " ") {
 		t.Error("Rainbow: space character missing from the result")
 	}
 }
 
-func TestBgRainbow_Escape_AddsNewLines(t *testing.T) {
-	result := BgRainbow("hi", "", 2)
-	count := strings.Count(result, "\n")
-	if count != 2 {
-		t.Errorf("Rainbow escape=2: expected 2 newlines, got %d", count)
-	}
-}
-
-func TestBgRainbow_ZeroEscape_NoNewLines(t *testing.T) {
-	result := BgRainbow("hi", "", 0)
-	if strings.Contains(result, "\n") {
-		t.Errorf("Rainbow escape=0: unexpected newline in result %q", result)
-	}
-}
-
-func TestBgRainbow_Mod_Bold(t *testing.T) {
-	result := BgRainbow("hi", "bold", 0)
-	if !strings.Contains(result, "\033[1m") {
-		t.Errorf("Rainbow bold: expected bold escape code, got %q", result)
-	}
-}
-
-func TestBgRainbow_Mod_Unknown_DoesNotPanic(t *testing.T) {
-	defer func() {
-		if r := recover(); r != nil {
-			t.Errorf("Rainbow panicked with unknown mod: %v", r)
-		}
-	}()
-	BgRainbow("hi", "unknown", 0)
-}
-
 func TestBgRainbow_ColorCycling(t *testing.T) {
 	long := "abcdefghij"
-	result := BgRainbow(long, "", 0)
+	result := BgRainbow(long)
 	for _, c := range long {
 		if !strings.Contains(result, string(c)) {
 			t.Errorf("Rainbow: char %q missing after color cycling", c)
@@ -280,6 +218,6 @@ func TestBgRainbow_ColorCycling(t *testing.T) {
 }
 
 func TestBgRainbow_EmptyString(t *testing.T) {
-	result := BgRainbow("", "", 0)
+	result := BgRainbow("")
 	_ = result
 }

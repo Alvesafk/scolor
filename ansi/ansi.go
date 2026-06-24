@@ -10,8 +10,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/Alvesafk/scolor"
 )
 
 // const declaration for the reset ansi escape sequence.
@@ -203,16 +201,16 @@ func (template AnsiTemplate) FormatString(s string) string {
 	return BgAnsi(FgAnsi(s, template.Fg), template.Bg)
 }
 
-// func FgRainbow receives a string to modify, a mod string and the amount of new lines, it
-// returns a string whose foreground is like a rainbow based on the ansi colors.
+// func FgRainbow receives a string, it returns a string whose foreground is like a rainbow
+// based on the ansi colors.
 //
 // Usage:
 //
-// rainbowFgString := FgRainbow("Hello, world!", "bold", "1")
-func FgRainbow(s, mod string, escape int) string {
+// rainbowFgString := FgRainbow("Hello, world!")
+func FgRainbow(s string) string {
 	all_term_colors := []string{ABlue.fg, ACyan.fg, AGreen.fg, APurple.fg, ARed.fg, AYellow.fg, AWhite.fg}
 
-	var result string
+	var sb strings.Builder
 
 	var cc int
 	for _, c := range s {
@@ -221,34 +219,29 @@ func FgRainbow(s, mod string, escape int) string {
 		}
 
 		if c == ' ' {
-			result += " "
+			sb.WriteString(" ")
 			continue
 		}
 
-		result += all_term_colors[cc] + string(c)
+		sb.WriteString(all_term_colors[cc])
+		sb.WriteRune(c)
 
 		cc++
 	}
 
-	result = scolor.AddMod(result, mod)
-
-	if escape > 0 {
-		result += strings.Repeat("\n", escape)
-	}
-
-	return result
+	return sb.String()
 }
 
-// func BgRainbow receives a string to modify, a mod string and the amount of new lines, it
-// returns a string whose background is like a rainbow based on the ansi colors.
+// func BgRainbow receives a string, it returns a string whose background is like a rainbow
+// based on the ansi colors.
 //
 // Usage:
 //
-// rainbowFgString := FgRainbow("Hello, world!", "bold", "1")
-func BgRainbow(s, mod string, escape int) string {
+// rainbowFgString := FgRainbow("Hello, world!")
+func BgRainbow(s string) string {
 	all_term_colors := []string{ABlue.bg, ACyan.bg, AGreen.bg, APurple.bg, ARed.bg, AYellow.bg, AWhite.bg}
 
-	var result string
+	var sb strings.Builder
 
 	var cc int
 	for _, c := range s {
@@ -256,20 +249,18 @@ func BgRainbow(s, mod string, escape int) string {
 			cc = 0
 		}
 
-		result += all_term_colors[cc] + string(c)
+		if c == ' ' {
+			sb.WriteString(" ")
+			continue
+		}
+
+		sb.WriteString(all_term_colors[cc])
+		sb.WriteRune(c)
 
 		cc++
 	}
 
-	result = scolor.AddMod(result, mod)
-
-	if escape > 0 {
-		result += strings.Repeat("\n", escape)
-	}
-
-	result = FgAnsi(result, ABlack)
-
-	return result
+	return sb.String()
 }
 
 /*
@@ -290,8 +281,8 @@ func (template AnsiTemplate) Println(a ...any) (n int, err error)
 func (template AnsiTemplate) Print(a ...any) (n int, err error)
 func (template AnsiTemplate) Printf(a ...any) (n int, err error)
 func (template AnsiTemplate) FormatString(s string) string
-func FgRainbow(s, mod string, escape int) string
-func BgRainbow(s, mod string, escape int) string
+func FgRainbow(s string) string
+func BgRainbow(s string) string
 
 var
 	ARed
