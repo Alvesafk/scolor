@@ -29,7 +29,7 @@ func main() {
 	ansi.AWhite.BgPrintln("Hello, world! Using the terminal White!")
 	time.Sleep(1 * time.Second / 2)
 
-	fmt.Println(ansi.FgRainbow("Hello, world! Rainbow string with the terminal colors!", "none", 0))
-	fmt.Println(ansi.BgRainbow("Hello, world! Rainbow string with the terminal colors!", "none", 0))
+	fmt.Println(ansi.FgRainbow("Hello, world! Rainbow string with the terminal colors!"))
+	fmt.Println(ansi.BgRainbow("Hello, world! Rainbow string with the terminal colors!"))
 	time.Sleep(1 * time.Second / 2)
 }
