@@ -4,6 +4,8 @@
 
 scolor is a lib made for **Go** making it easier to use colorized strings in your programs.
 
+![Showcase gif](animation.gif)
+
 Was originally made inside of another project of mine, [agopass](https://github.com/Alvesafk/agopass), i decided to make it separate from the orginal project because i will be using it on other projects, specially because this version is way better then the original.
 
 The lib has a main `scolor` package that format strings using 24bit colors and a separate `ansi` package that uses the colors defined by the terminal.
