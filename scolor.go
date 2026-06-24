@@ -182,21 +182,18 @@ func check8Bit(cInt *int, cMod int) {
 //
 // pinkToBlueString := FgGradient("Hello, world!", pink, RGB(104, 150, 214))
 func FgGradient(s string, firstColor, secondColor Color) string {
-	fRed := firstColor.Red
-	fGreen := firstColor.Green
-	fBlue := firstColor.Blue
-
 	redMod := (secondColor.Red - firstColor.Red) / len(s)
 	greenMod := (secondColor.Green - firstColor.Green) / len(s)
 	blueMod := (secondColor.Blue - firstColor.Blue) / len(s)
 
 	var sb strings.Builder
 	for _, c := range s {
-		sb.WriteString(FgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue}))
+		sb.WriteString(FgRGB(string(c), Color{Red: firstColor.Red,
+			Green: firstColor.Green, Blue: firstColor.Blue}))
 
-		check8Bit(&fRed, redMod)
-		check8Bit(&fGreen, greenMod)
-		check8Bit(&fBlue, blueMod)
+		check8Bit(&firstColor.Red, redMod)
+		check8Bit(&firstColor.Green, greenMod)
+		check8Bit(&firstColor.Blue, blueMod)
 	}
 
 	return sb.String()
@@ -209,21 +206,18 @@ func FgGradient(s string, firstColor, secondColor Color) string {
 //
 // pinkToBlueString := FgGradient("Hello, world!", pink, RGB(104, 150, 214))
 func BgGradient(s string, firstColor, secondColor Color) string {
-	fRed := firstColor.Red
-	fGreen := firstColor.Green
-	fBlue := firstColor.Blue
-
 	redMod := (secondColor.Red - firstColor.Red) / len(s)
 	greenMod := (secondColor.Green - firstColor.Green) / len(s)
 	blueMod := (secondColor.Blue - firstColor.Blue) / len(s)
 
 	var sb strings.Builder
 	for _, c := range s {
-		sb.WriteString(BgRGB(string(c), Color{Red: fRed, Green: fGreen, Blue: fBlue}))
+		sb.WriteString(BgRGB(string(c), Color{Red: firstColor.Red,
+			Green: firstColor.Green, Blue: firstColor.Blue}))
 
-		check8Bit(&fRed, redMod)
-		check8Bit(&fGreen, greenMod)
-		check8Bit(&fBlue, blueMod)
+		check8Bit(&firstColor.Red, redMod)
+		check8Bit(&firstColor.Green, greenMod)
+		check8Bit(&firstColor.Blue, blueMod)
 	}
 
 	return sb.String()
@@ -318,14 +312,6 @@ func (template RgbTemplate) FormatString(s string) string {
 //
 // stringWhiteToBlack := TmplGradient("Hello, world!", whiteBgWithBlackFg, blackBgWithWhiteFg)
 func TmplGradient(s string, firstTemplate, secondTemplate RgbTemplate) string {
-	fFgRed := firstTemplate.Fg.Red
-	fFgGreen := firstTemplate.Fg.Green
-	fFgBlue := firstTemplate.Fg.Blue
-
-	fBgRed := firstTemplate.Bg.Red
-	fBgGreen := firstTemplate.Bg.Green
-	fBgBlue := firstTemplate.Bg.Blue
-
 	fgRedMod := (secondTemplate.Fg.Red - firstTemplate.Fg.Red) / len(s)
 	fgGreenMod := (secondTemplate.Fg.Green - firstTemplate.Fg.Green) / len(s)
 	fgBlueMod := (secondTemplate.Fg.Blue - firstTemplate.Fg.Blue) / len(s)
@@ -336,15 +322,16 @@ func TmplGradient(s string, firstTemplate, secondTemplate RgbTemplate) string {
 
 	var sb strings.Builder
 	for _, c := range s {
-		sb.WriteString(BgRGB(FgRGB(string(c), Color{Red: fFgRed, Green: fFgGreen, Blue: fFgBlue}),
-			Color{Red: fBgRed, Green: fBgGreen, Blue: fBgBlue}))
+		sb.WriteString(BgRGB(FgRGB(string(c), Color{Red: firstTemplate.Fg.Red,
+			Green: firstTemplate.Fg.Green, Blue: firstTemplate.Bg.Blue}),
+			Color{Red: firstTemplate.Bg.Red, Green: firstTemplate.Bg.Green, Blue: firstTemplate.Bg.Blue}))
 
-		check8Bit(&fFgRed, fgRedMod)
-		check8Bit(&fBgRed, bgRedMod)
-		check8Bit(&fFgGreen, fgGreenMod)
-		check8Bit(&fBgGreen, bgGreenMod)
-		check8Bit(&fFgBlue, fgBlueMod)
-		check8Bit(&fBgBlue, bgBlueMod)
+		check8Bit(&firstTemplate.Fg.Red, fgRedMod)
+		check8Bit(&firstTemplate.Bg.Red, bgRedMod)
+		check8Bit(&firstTemplate.Fg.Green, fgGreenMod)
+		check8Bit(&firstTemplate.Bg.Green, bgGreenMod)
+		check8Bit(&firstTemplate.Fg.Blue, fgBlueMod)
+		check8Bit(&firstTemplate.Bg.Blue, bgBlueMod)
 	}
 
 	return sb.String()
