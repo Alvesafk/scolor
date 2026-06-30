@@ -15,8 +15,10 @@ import (
 // const declaration for the reset ansi escape sequence.
 const reset = "\033[0m"
 
+// Custom int type for the Ansi Colors, they are just a enum from 0 to 7.
 type AnsiColor int
 
+// Main ansi colors.
 const (
 	Black AnsiColor = iota
 	Red
@@ -28,12 +30,12 @@ const (
 	White
 )
 
-// func BgPrintln is a ansiColor method for printing text with a colored background on the
+// func BgPrintln is a AnsiColor method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Println function.
 //
 // Usage:
 //
-// ACyan.BgPrintln("Hello, ", "World!")
+// Cyan.BgPrintln("Hello, ", "World!")
 func (color AnsiColor) BgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -43,12 +45,12 @@ func (color AnsiColor) BgPrintln(a ...any) (n int, err error) {
 	return fmt.Fprintln(os.Stdout, colored...)
 }
 
-// func BgPrint is a ansiColor method for printing text with a colored background on the
+// func BgPrint is a AnsiColor method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Print function.
 //
 // Usage:
 //
-// ACyan.BgPrintl"Hello, ", "World!")
+// Cyan.BgPrintl"Hello, ", "World!")
 func (color AnsiColor) BgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -58,23 +60,23 @@ func (color AnsiColor) BgPrint(a ...any) (n int, err error) {
 	return fmt.Fprint(os.Stdout, colored...)
 }
 
-// func BgPrintf is a ansiColor method for printing text with a colored background on the
+// func BgPrintf is a AnsiColor method for printing text with a colored background on the
 // terminal, the use is identical to the fmt Printf function.
 //
 // Usage:
 //
-// ACyan.BgPrintf"Hello, ", "World!")
+// Cyan.BgPrintf"Hello, ", "World!")
 func (color AnsiColor) BgPrintf(format string, a ...any) (n int, err error) {
 	colorString := BgAnsi(format, color)
 	return fmt.Fprintf(os.Stdout, colorString, a...)
 }
 
-// func FgPrintln is a ansiColor method for printing text with a colored foreground on the
+// func FgPrintln is a AnsiColor method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Println function.
 //
 // Usage:
 //
-// ACyan.FgPrintln"Hello, ", "World!")
+// Cyan.FgPrintln"Hello, ", "World!")
 func (color AnsiColor) FgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -84,12 +86,12 @@ func (color AnsiColor) FgPrintln(a ...any) (n int, err error) {
 	return fmt.Fprintln(os.Stdout, colored...)
 }
 
-// func FgPrint is a ansiColor method for printing text with a colored foreground on the
+// func FgPrint is a AnsiColor method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Print function.
 //
 // Usage:
 //
-// ACyan.FgPrint"Hello, ", "World!")
+// Cyan.FgPrint("Hello, ", "World!")
 func (color AnsiColor) FgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
@@ -99,12 +101,12 @@ func (color AnsiColor) FgPrint(a ...any) (n int, err error) {
 	return fmt.Fprint(os.Stdout, colored...)
 }
 
-// func FgPrintf is a ansiColor method for printing text with a colored foreground on the
+// func FgPrintf is a AnsiColor method for printing text with a colored foreground on the
 // terminal, the use is identical to the fmt Printf function.
 //
 // Usage:
 //
-// ACyan.FgPrintf"Hello, ", "World!")
+// Cyan.FgPrintf"Hello, ", "World!")
 func (color AnsiColor) FgPrintf(format string, a ...any) (n int, err error) {
 	colorString := FgAnsi(format, color)
 	return fmt.Fprintf(os.Stdout, colorString, a...)
@@ -115,7 +117,7 @@ func (color AnsiColor) FgPrintf(format string, a ...any) (n int, err error) {
 //
 // Usage:
 //
-// cyanFgString := FgAnsi("Hello, World!", ACyan)
+// cyanFgString := FgAnsi("Hello, World!", Cyan)
 func FgAnsi(s string, color AnsiColor) string {
 	return fmt.Sprintf("\033[3%vm%s%s", color, s, reset)
 }
@@ -125,7 +127,7 @@ func FgAnsi(s string, color AnsiColor) string {
 //
 // Usage:
 //
-// cyanBgString := BgAnsi("Hello, World!", ACyan)
+// cyanBgString := BgAnsi("Hello, World!", Cyan)
 func BgAnsi(s string, color AnsiColor) string {
 	return fmt.Sprintf("\033[4%vm%s%s", color, s, reset)
 }
@@ -141,7 +143,7 @@ type AnsiTemplate struct {
 //
 // Usage:
 //
-// whiteBgWithBlackFg := CreateAnsiTemplate(AWhite, ABlack)
+// whiteBgWithBlackFg := CreateAnsiTemplate(White, Black)
 func CreateAnsiTemplate(bg, fg AnsiColor) *AnsiTemplate {
 	return &AnsiTemplate{Bg: bg, Fg: fg}
 }
@@ -263,30 +265,30 @@ func BgRainbow(s string) string {
 /*
 INDEX:
 const reset
-type ansiColor struct
-func (color ansiColor) BgPrintln(a ...any) (n int, err error)
-func (color ansiColor) BgPrint(a ...any) (n int, err error)
-func (color ansiColor) BgPrintf(a ...any) (n int, err error)
-func (color ansiColor) FgPrintln(a ...any) (n int, err error)
-func (color ansiColor) FgPrint(a ...any) (n int, err error)
-func (color ansiColor) FgPrintf(a ...any) (n int, err error)
-func FgAnsi(s string, color ansiColor) string
-func BgAnsi(s string, color ansiColor) string
+type AnsiColor int
+const
+	Red
+	Green
+	Yellow
+	Blue
+	Purple
+	Cyan
+	White
+
+func (color AnsiColor) BgPrintln(a ...any) (n int, err error)
+func (color AnsiColor) BgPrint(a ...any) (n int, err error)
+func (color AnsiColor) BgPrintf(a ...any) (n int, err error)
+func (color AnsiColor) FgPrintln(a ...any) (n int, err error)
+func (color AnsiColor) FgPrint(a ...any) (n int, err error)
+func (color AnsiColor) FgPrintf(a ...any) (n int, err error)
+func FgAnsi(s string, color AnsiColor) string
+func BgAnsi(s string, color AnsiColor) string
 type AnsiTemplate struct
-func CreateAnsiTemplate(bg, fg ansiColor) *AnsiTemplate
+func CreateAnsiTemplate(bg, fg AnsiColor) *AnsiTemplate
 func (template AnsiTemplate) Println(a ...any) (n int, err error)
 func (template AnsiTemplate) Print(a ...any) (n int, err error)
 func (template AnsiTemplate) Printf(a ...any) (n int, err error)
 func (template AnsiTemplate) FormatString(s string) string
 func FgRainbow(s string) string
 func BgRainbow(s string) string
-
-var
-	ARed
-	AGreen
-	AYellow
-	ABlue
-	APurple
-	ACyan
-	AWhite
 */
