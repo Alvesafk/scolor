@@ -8,25 +8,25 @@ import (
 )
 
 func main() {
-	ansi.ABlue.BgPrintln("Hello, world! Using the terminal Blue!")
+	ansi.Blue.BgPrintln("Hello, world! Using the terminal Blue!")
 	time.Sleep(1 * time.Second / 2)
 
-	ansi.ACyan.FgPrintln("Hello, world! Using the terminal Cyan!")
+	ansi.Cyan.FgPrintln("Hello, world! Using the terminal Cyan!")
 	time.Sleep(1 * time.Second / 2)
 
-	ansi.AGreen.BgPrintln("Hello, world! Using the terminal Green!")
+	ansi.Green.BgPrintln("Hello, world! Using the terminal Green!")
 	time.Sleep(1 * time.Second / 2)
 
-	ansi.APurple.FgPrintln("Hello, world! Using the terminal Purple!")
+	ansi.Purple.FgPrintln("Hello, world! Using the terminal Purple!")
 	time.Sleep(1 * time.Second / 2)
 
-	ansi.ARed.BgPrintln("Hello, world! Using the terminal Red!")
+	ansi.Red.BgPrintln("Hello, world! Using the terminal Red!")
 	time.Sleep(1 * time.Second / 2)
 
-	ansi.AYellow.FgPrintln("Hello, world! Using the terminal Yellow!")
+	ansi.Yellow.FgPrintln("Hello, world! Using the terminal Yellow!")
 	time.Sleep(1 * time.Second / 2)
 
-	ansi.AWhite.BgPrintln("Hello, world! Using the terminal White!")
+	ansi.White.BgPrintln("Hello, world! Using the terminal White!")
 	time.Sleep(1 * time.Second / 2)
 
 	fmt.Println(ansi.FgRainbow("Hello, world! Rainbow string with the terminal colors!"))

@@ -13,26 +13,19 @@ import (
 )
 
 // const declaration for the reset ansi escape sequence.
+const reset = "\033[0m"
+
+type AnsiColor int
+
 const (
-	reset = "\033[0m"
-)
-
-// ansiColor struct is a private struct with the ansi codes for background and foreground
-// colors.
-type ansiColor struct {
-	bg, fg string
-}
-
-// The default ansi terminal colors.
-var (
-	ABlack  = ansiColor{bg: "\033[40m", fg: "\033[30m"}
-	ARed    = ansiColor{bg: "\033[41m", fg: "\033[31m"}
-	AGreen  = ansiColor{bg: "\033[42m", fg: "\033[32m"}
-	AYellow = ansiColor{bg: "\033[43m", fg: "\033[33m"}
-	ABlue   = ansiColor{bg: "\033[44m", fg: "\033[34m"}
-	APurple = ansiColor{bg: "\033[45m", fg: "\033[35m"}
-	ACyan   = ansiColor{bg: "\033[46m", fg: "\033[36m"}
-	AWhite  = ansiColor{bg: "\033[47m", fg: "\033[37m"}
+	Black AnsiColor = iota
+	Red
+	Green
+	Yellow
+	Blue
+	Purple
+	Cyan
+	White
 )
 
 // func BgPrintln is a ansiColor method for printing text with a colored background on the
@@ -41,7 +34,7 @@ var (
 // Usage:
 //
 // ACyan.BgPrintln("Hello, ", "World!")
-func (color ansiColor) BgPrintln(a ...any) (n int, err error) {
+func (color AnsiColor) BgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
 		colored[i] = BgAnsi(fmt.Sprint(v), color)
@@ -56,7 +49,7 @@ func (color ansiColor) BgPrintln(a ...any) (n int, err error) {
 // Usage:
 //
 // ACyan.BgPrintl"Hello, ", "World!")
-func (color ansiColor) BgPrint(a ...any) (n int, err error) {
+func (color AnsiColor) BgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
 		colored[i] = BgAnsi(fmt.Sprint(v), color)
@@ -71,8 +64,9 @@ func (color ansiColor) BgPrint(a ...any) (n int, err error) {
 // Usage:
 //
 // ACyan.BgPrintf"Hello, ", "World!")
-func (color ansiColor) BgPrintf(format string, a ...any) (n int, err error) {
-	return fmt.Fprintf(os.Stdout, BgAnsi(format, color), a...)
+func (color AnsiColor) BgPrintf(format string, a ...any) (n int, err error) {
+	colorString := BgAnsi(format, color)
+	return fmt.Fprintf(os.Stdout, colorString, a...)
 }
 
 // func FgPrintln is a ansiColor method for printing text with a colored foreground on the
@@ -81,7 +75,7 @@ func (color ansiColor) BgPrintf(format string, a ...any) (n int, err error) {
 // Usage:
 //
 // ACyan.FgPrintln"Hello, ", "World!")
-func (color ansiColor) FgPrintln(a ...any) (n int, err error) {
+func (color AnsiColor) FgPrintln(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
 		colored[i] = FgAnsi(fmt.Sprint(v), color)
@@ -96,7 +90,7 @@ func (color ansiColor) FgPrintln(a ...any) (n int, err error) {
 // Usage:
 //
 // ACyan.FgPrint"Hello, ", "World!")
-func (color ansiColor) FgPrint(a ...any) (n int, err error) {
+func (color AnsiColor) FgPrint(a ...any) (n int, err error) {
 	colored := make([]any, len(a))
 	for i, v := range a {
 		colored[i] = FgAnsi(fmt.Sprint(v), color)
@@ -111,8 +105,9 @@ func (color ansiColor) FgPrint(a ...any) (n int, err error) {
 // Usage:
 //
 // ACyan.FgPrintf"Hello, ", "World!")
-func (color ansiColor) FgPrintf(format string, a ...any) (n int, err error) {
-	return fmt.Fprintf(os.Stdout, FgAnsi(format, color), a...)
+func (color AnsiColor) FgPrintf(format string, a ...any) (n int, err error) {
+	colorString := FgAnsi(format, color)
+	return fmt.Fprintf(os.Stdout, colorString, a...)
 }
 
 // func FgAnsi receives a string and a color, it returns a string which it's foreground is
@@ -121,8 +116,8 @@ func (color ansiColor) FgPrintf(format string, a ...any) (n int, err error) {
 // Usage:
 //
 // cyanFgString := FgAnsi("Hello, World!", ACyan)
-func FgAnsi(s string, color ansiColor) string {
-	return fmt.Sprintf("%s%s%s", color.fg, s, reset)
+func FgAnsi(s string, color AnsiColor) string {
+	return fmt.Sprintf("\033[3%vm%s%s", color, s, reset)
 }
 
 // func BgAnsi receives a string and a color, it returns a string which it's foreground is
@@ -131,14 +126,14 @@ func FgAnsi(s string, color ansiColor) string {
 // Usage:
 //
 // cyanBgString := BgAnsi("Hello, World!", ACyan)
-func BgAnsi(s string, color ansiColor) string {
-	return fmt.Sprintf("%s%s%s", color.bg, s, reset)
+func BgAnsi(s string, color AnsiColor) string {
+	return fmt.Sprintf("\033[4%vm%s%s", color, s, reset)
 }
 
 // AnsiTemplate accepts a background color and a foreground color, making it easier to print
 // strings with colored background and foreground.
 type AnsiTemplate struct {
-	Bg, Fg ansiColor
+	Bg, Fg AnsiColor
 }
 
 // func CreateAnsiTemplate receives a background color and a foreground color, it returns a
@@ -147,7 +142,7 @@ type AnsiTemplate struct {
 // Usage:
 //
 // whiteBgWithBlackFg := CreateAnsiTemplate(AWhite, ABlack)
-func CreateAnsiTemplate(bg, fg ansiColor) *AnsiTemplate {
+func CreateAnsiTemplate(bg, fg AnsiColor) *AnsiTemplate {
 	return &AnsiTemplate{Bg: bg, Fg: fg}
 }
 
@@ -208,7 +203,7 @@ func (template AnsiTemplate) FormatString(s string) string {
 //
 // rainbowFgString := FgRainbow("Hello, world!")
 func FgRainbow(s string) string {
-	all_term_colors := []string{ABlue.fg, ACyan.fg, AGreen.fg, APurple.fg, ARed.fg, AYellow.fg, AWhite.fg}
+	all_term_colors := []AnsiColor{Blue, Cyan, Green, Purple, Red, Yellow, White}
 
 	var sb strings.Builder
 
@@ -223,7 +218,7 @@ func FgRainbow(s string) string {
 			continue
 		}
 
-		sb.WriteString(all_term_colors[cc])
+		sb.WriteString(fmt.Sprintf("\033[3%vm", all_term_colors[cc]))
 		sb.WriteRune(c)
 
 		cc++
@@ -239,7 +234,7 @@ func FgRainbow(s string) string {
 //
 // rainbowFgString := FgRainbow("Hello, world!")
 func BgRainbow(s string) string {
-	all_term_colors := []string{ABlue.bg, ACyan.bg, AGreen.bg, APurple.bg, ARed.bg, AYellow.bg, AWhite.bg}
+	all_term_colors := []AnsiColor{Blue, Cyan, Green, Purple, Red, Yellow, White}
 
 	var sb strings.Builder
 
@@ -254,13 +249,15 @@ func BgRainbow(s string) string {
 			continue
 		}
 
-		sb.WriteString(all_term_colors[cc])
+		sb.WriteString(fmt.Sprintf("\033[4%vm", all_term_colors[cc]))
 		sb.WriteRune(c)
 
 		cc++
 	}
 
-	return sb.String()
+	result := FgAnsi(sb.String(), Black)
+
+	return result
 }
 
 /*
