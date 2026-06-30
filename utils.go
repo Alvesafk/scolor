@@ -2,22 +2,31 @@ package scolor
 
 import "regexp"
 
-// func AddMod receives a string to be modified and a mod string, it returns the modified
-// string, the mods are: "bold", "underline", "strike", "italic", if the mod string is
-// different than this the function returns the string to be modified.
+// Mod "enum", it's used on a switch statement for the AddMod function.
+const (
+	Bold = iota + 1
+	Underline
+	Strike
+	Italic
+)
+
+// func AddMod receives a string to be modified and a mod, its recomended the use of the
+// "enum" defined within this package, it returns the modified string, the mods are: Bold,
+// Underline, Strike, Italic, if the mod string is different than this the function returns
+// the string to be modified.
 //
 // Usage:
 //
-// boldString := AddMod("Hello, world!", "bold")
-func AddMod(s, mod string) string {
+// boldString := AddMod("Hello, world!", Bold)
+func AddMod(s string, mod int) string {
 	switch mod {
-	case "bold":
+	case Bold:
 		s = "\033[1m" + s
-	case "underline":
+	case Underline:
 		s = "\033[4m" + s
-	case "strike":
+	case Strike:
 		s = "\033[9m" + s
-	case "italic":
+	case Italic:
 		s = "\033[3m" + s
 	default:
 		return s
@@ -31,7 +40,7 @@ func AddMod(s, mod string) string {
 //
 // Usage:
 //
-// boldString := AddMod("Hello, world!", "bold")
+// boldString := AddMod("Hello, world!", Bold)
 // cleanString := RemoveEscapeSequence(boldString)
 func RemoveEscapeSequence(s string) string {
 	escape := regexp.MustCompile(`\x1b\[[0-9;]*m`)
@@ -40,6 +49,6 @@ func RemoveEscapeSequence(s string) string {
 
 /*
 INDEX:
-func AddMod(s, mod string) string
+func AddMod(s string, mod int) string
 func RemoveEscapeSequence(s string) string
 */
