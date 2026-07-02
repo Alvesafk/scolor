@@ -323,7 +323,7 @@ func TmplGradient(s string, firstTemplate, secondTemplate RgbTemplate) string {
 	var sb strings.Builder
 	for _, c := range s {
 		sb.WriteString(BgRGB(FgRGB(string(c), Color{Red: firstTemplate.Fg.Red,
-			Green: firstTemplate.Fg.Green, Blue: firstTemplate.Bg.Blue}),
+			Green: firstTemplate.Fg.Green, Blue: firstTemplate.Fg.Blue}),
 			Color{Red: firstTemplate.Bg.Red, Green: firstTemplate.Bg.Green, Blue: firstTemplate.Bg.Blue}))
 
 		check8Bit(&firstTemplate.Fg.Red, fgRedMod)
