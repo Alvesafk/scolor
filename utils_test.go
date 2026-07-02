@@ -3,72 +3,66 @@ Author © 2026 alvesafk <migueldealmeidaalves55@gmail.com>
 
 Tests for utils.go
 */
+
 package scolor
 
-import (
-	"strings"
-	"testing"
-)
+import "testing"
 
-// AddMod tests
-
-func TestAddMod_Bold(t *testing.T) {
-	result := AddMod("hello", Bold)
-	if !strings.Contains(result, "\033[1m") {
-		t.Errorf("AddMod bold: expected bold escape, got %q", result)
+func TestAddMod(t *testing.T) {
+	tests := []struct {
+		name string
+		mod  int
+		want string
+	}{
+		{name: "bold", mod: Bold, want: "\033[1mhello"},
+		{name: "underline", mod: Underline, want: "\033[4mhello"},
+		{name: "strike", mod: Strike, want: "\033[9mhello"},
+		{name: "italic", mod: Italic, want: "\033[3mhello"},
+		{name: "unknown mod returns original string", mod: 999, want: "hello"},
 	}
-	if !strings.Contains(result, "hello") {
-		t.Errorf("AddMod bold: original string missing, got %q", result)
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := AddMod("hello", tt.mod); got != tt.want {
+				t.Fatalf("AddMod() = %q, want %q", got, tt.want)
+			}
+		})
 	}
 }
 
-func TestAddMod_Underine(t *testing.T) {
-	result := AddMod("hello", Underline)
-	if !strings.Contains(result, "\033[4m") {
-		t.Errorf("AddMod underline: expected underline escape, got %q", result)
-	}
-	if !strings.Contains(result, "hello") {
-		t.Errorf("AddMod underline: original string missing, got %q", result)
-	}
-}
-
-func TestAddMod_Strike(t *testing.T) {
-	result := AddMod("hello", Strike)
-	if !strings.Contains(result, "\033[9m") {
-		t.Errorf("AddMod strike: expected strike escape, got %q", result)
-	}
-	if !strings.Contains(result, "hello") {
-		t.Errorf("AddMod strike: original string missing, got %q", result)
-	}
-}
-
-func TestAddMod_Italic(t *testing.T) {
-	result := AddMod("hello", Italic)
-	if !strings.Contains(result, "\033[3m") {
-		t.Errorf("AddMod italic: expected italic escape, got %q", result)
-	}
-	if !strings.Contains(result, "hello") {
-		t.Errorf("AddMod italic: original string missing, got %q", result)
-	}
-}
-
-func TestAddMod_Unknown_ReturnsUnchanged(t *testing.T) {
-	input := "hello"
-	result := AddMod(input, 10)
-	if result != input {
-		t.Errorf("AddMod unknown mod: expected %q unchanged, got %q", input, result)
-	}
-}
-
-func TestAddMod_PrefixPosition(t *testing.T) {
-	result := AddMod("x", Bold)
-	boldIdx := strings.Index(result, "\033[1m")
-	xIdx := strings.Index(result, "x")
-	if boldIdx == -1 {
-		t.Fatal("Bold escape not found")
+func TestRemoveEscapeSequence(t *testing.T) {
+	tests := []struct {
+		name string
+		in   string
+		want string
+	}{
+		{
+			name: "plain string",
+			in:   "hello",
+			want: "hello",
+		},
+		{
+			name: "single modifier",
+			in:   "\033[1mhello",
+			want: "hello",
+		},
+		{
+			name: "foreground RGB sequence with reset",
+			in:   "\x1b[38;2;1;2;3mhello\x1b[0m",
+			want: "hello",
+		},
+		{
+			name: "multiple sequences",
+			in:   "\033[1mhello \x1b[48;2;4;5;6mworld\x1b[0m",
+			want: "hello world",
+		},
 	}
 
-	if boldIdx > xIdx {
-		t.Errorf("Bold escape (%d) should precede text (%d)", boldIdx, xIdx)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RemoveEscapeSequence(tt.in); got != tt.want {
+				t.Fatalf("RemoveEscapeSequence() = %q, want %q", got, tt.want)
+			}
+		})
 	}
 }
