@@ -6,197 +6,306 @@ Tests for scolor.go
 package scolor
 
 import (
-	"strings"
+	"bytes"
+	"io"
+	"os"
 	"testing"
 )
 
-// Color constructor
+func captureScolorStdout(t *testing.T, fn func() (int, error)) (string, int, error) {
+	t.Helper()
+
+	oldStdout := os.Stdout
+	r, w, err := os.Pipe()
+	if err != nil {
+		t.Fatalf("os.Pipe() error = %v", err)
+	}
+
+	os.Stdout = w
+	defer func() { os.Stdout = oldStdout }()
+
+	n, fnErr := fn()
+	if closeErr := w.Close(); closeErr != nil {
+		t.Fatalf("closing stdout pipe writer: %v", closeErr)
+	}
+
+	var buf bytes.Buffer
+	if _, copyErr := io.Copy(&buf, r); copyErr != nil {
+		t.Fatalf("reading captured stdout: %v", copyErr)
+	}
+	if closeErr := r.Close(); closeErr != nil {
+		t.Fatalf("closing stdout pipe reader: %v", closeErr)
+	}
+
+	return buf.String(), n, fnErr
+}
 
 func TestRGB(t *testing.T) {
-	c := RGB(10, 20, 30)
-	if c.Red != 10 || c.Green != 20 || c.Blue != 30 {
-		t.Errorf("RGB(10,20,30) = {%d,%d,%d}, want {10,20,30}",
-			c.Red, c.Green, c.Blue)
+	t.Run("valid RGB values", func(t *testing.T) {
+		got := RGB(12, 34, 56)
+		want := Color{Red: 12, Green: 34, Blue: 56}
+		if got != want {
+			t.Fatalf("RGB(12, 34, 56) = %#v, want %#v", got, want)
+		}
+	})
+
+	t.Run("rejects values greater than 255", func(t *testing.T) {
+		cases := []struct {
+			name             string
+			red, green, blue int
+		}{
+			{name: "red", red: 256, green: 0, blue: 0},
+			{name: "green", red: 0, green: 256, blue: 0},
+			{name: "blue", red: 0, green: 0, blue: 256},
+		}
+
+		for _, tc := range cases {
+			t.Run(tc.name, func(t *testing.T) {
+				if got := RGB(tc.red, tc.green, tc.blue); got != (Color{}) {
+					t.Fatalf("RGB(%d, %d, %d) = %#v, want zero Color", tc.red, tc.green, tc.blue, got)
+				}
+			})
+		}
+	})
+}
+
+func TestFgRGBAndBgRGB(t *testing.T) {
+	color := Color{Red: 1, Green: 2, Blue: 3}
+
+	if got, want := FgRGB("text", color), "\x1b[38;2;1;2;3mtext\x1b[0m"; got != want {
+		t.Fatalf("FgRGB() = %q, want %q", got, want)
+	}
+
+	if got, want := BgRGB("text", color), "\x1b[48;2;1;2;3mtext\x1b[0m"; got != want {
+		t.Fatalf("BgRGB() = %q, want %q", got, want)
 	}
 }
 
-func TestRGB_Boundaries(t *testing.T) {
-	black := RGB(0, 0, 0)
-	white := RGB(255, 255, 255)
+func TestColorForegroundPrintMethods(t *testing.T) {
+	color := Color{Red: 9, Green: 8, Blue: 7}
 
-	if black.Red != 0 || black.Green != 0 || black.Blue != 0 {
-		t.Errorf("RGB(0,0,0): unexpected values")
-	}
-	if white.Red != 255 || white.Green != 255 || white.Blue != 255 {
-		t.Errorf("RGB(255,255,255): unexpected values")
-	}
-}
-
-// FgRGB / BgRGB - escape sequence format
-
-func TestFgRGB_EscapeSequence(t *testing.T) {
-	c := RGB(200, 100, 50)
-	result := FgRGB("hello", c)
-
-	if !strings.HasPrefix(result, "\x1b[38;2") {
-		t.Errorf("FgRGB: expected foreground escape prefix, got %q", result)
-	}
-
-	if !strings.Contains(result, "200;100;50m") {
-		t.Errorf("FgRGB: RGB values not found in escape sequence, got %q", result)
-	}
-
-	if !strings.Contains(result, "hello") {
-		t.Errorf("FgRGB: original string not present in result, got %q", result)
-	}
-
-	if !strings.HasSuffix(result, "\x1b[0m") {
-		t.Errorf("FgRGB: expected reset suffix, got %q", result)
-	}
-}
-
-func TestBgRGB_EscapeSequence(t *testing.T) {
-	c := RGB(10, 20, 30)
-	result := BgRGB("world", c)
-
-	if !strings.HasPrefix(result, "\x1b[48;2") {
-		t.Errorf("BgRGB: expected foreground escape prefix, got %q", result)
-	}
-
-	if !strings.Contains(result, "10;20;30m") {
-		t.Errorf("BgRGB: RGB values not found in escape sequence, got %q", result)
-	}
-
-	if !strings.Contains(result, "world") {
-		t.Errorf("BgRGB: original string not present in result, got %q", result)
-	}
-
-	if !strings.HasSuffix(result, "\x1b[0m") {
-		t.Errorf("BgRGB: expected reset suffix, got %q", result)
-	}
-}
-
-func TestFgRGB_EmptyString(t *testing.T) {
-	result := FgRGB("", RGB(255, 0, 0))
-	if !strings.HasSuffix(result, "\x1b[0m") {
-		t.Errorf("FgRGB with empty string: expected reset suffix, got %q", result)
-	}
-}
-
-func TestBgRGB_EmptyString(t *testing.T) {
-	result := BgRGB("", RGB(255, 0, 0))
-	if !strings.HasSuffix(result, "\x1b[0m") {
-		t.Errorf("BgRGB with empty string: expected reset suffix, got %q", result)
-	}
-}
-
-// Preset colors
-
-func TestPresetColors(t *testing.T) {
-	tests := []struct {
-		name    string
-		color   Color
-		r, g, b int
-	}{
-		{"BLACK", BLACK, 0, 0, 0},
-		{"WHITE", WHITE, 255, 255, 255},
-		{"RED", RED, 200, 0, 0},
-		{"GREEN", GREEN, 0, 200, 0},
-		{"BLUE", BLUE, 0, 0, 200},
-		{"CYAN", CYAN, 0, 200, 200},
-		{"YELLOW", YELLOW, 200, 200, 0},
-		{"ORANGE", ORANGE, 200, 115, 0},
-		{"PINK", PINK, 200, 140, 150},
-		{"PURPLE", PURPLE, 80, 0, 80},
-		{"BROWN", BROWN, 110, 20, 20},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if tt.color.Red != tt.r || tt.color.Green != tt.g || tt.color.Blue != tt.b {
-				t.Errorf("%s = {%d,%d,%d}, want {%d,%d,%d}",
-					tt.name, tt.color.Red, tt.color.Green, tt.color.Blue,
-					tt.r, tt.g, tt.b)
-			}
+	t.Run("FgPrint", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return color.FgPrint("hello", 123)
 		})
+		want := FgRGB("hello", color) + FgRGB("123", color)
+		if err != nil {
+			t.Fatalf("FgPrint() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("FgPrint() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("FgPrint() n = %d, want %d", n, len(want))
+		}
+	})
+
+	t.Run("FgPrintln", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return color.FgPrintln("hello", "world")
+		})
+		want := FgRGB("hello", color) + " " + FgRGB("world", color) + "\n"
+		if err != nil {
+			t.Fatalf("FgPrintln() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("FgPrintln() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("FgPrintln() n = %d, want %d", n, len(want))
+		}
+	})
+
+	t.Run("FgPrintf", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return color.FgPrintf("hello %s", "gopher")
+		})
+		want := FgRGB("hello gopher", color)
+		if err != nil {
+			t.Fatalf("FgPrintf() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("FgPrintf() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("FgPrintf() n = %d, want %d", n, len(want))
+		}
+	})
+}
+
+func TestColorBackgroundPrintMethods(t *testing.T) {
+	color := Color{Red: 7, Green: 8, Blue: 9}
+
+	t.Run("BgPrint", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return color.BgPrint("hello", 123)
+		})
+		want := BgRGB("hello", color) + BgRGB("123", color)
+		if err != nil {
+			t.Fatalf("BgPrint() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("BgPrint() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("BgPrint() n = %d, want %d", n, len(want))
+		}
+	})
+
+	t.Run("BgPrintln", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return color.BgPrintln("hello", "world")
+		})
+		want := BgRGB("hello", color) + " " + BgRGB("world", color) + "\n"
+		if err != nil {
+			t.Fatalf("BgPrintln() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("BgPrintln() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("BgPrintln() n = %d, want %d", n, len(want))
+		}
+	})
+
+	t.Run("BgPrintf", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return color.BgPrintf("hello %s", "gopher")
+		})
+		want := BgRGB("hello gopher", color)
+		if err != nil {
+			t.Fatalf("BgPrintf() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("BgPrintf() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("BgPrintf() n = %d, want %d", n, len(want))
+		}
+	})
+}
+
+func TestGradients(t *testing.T) {
+	first := Color{Red: 0, Green: 0, Blue: 0}
+	second := Color{Red: 30, Green: 60, Blue: 90}
+
+	wantFg := FgRGB("a", Color{Red: 0, Green: 0, Blue: 0}) +
+		FgRGB("b", Color{Red: 10, Green: 20, Blue: 30}) +
+		FgRGB("c", Color{Red: 20, Green: 40, Blue: 60})
+	if got := FgGradient("abc", first, second); got != wantFg {
+		t.Fatalf("FgGradient() = %q, want %q", got, wantFg)
+	}
+
+	wantBg := BgRGB("a", Color{Red: 0, Green: 0, Blue: 0}) +
+		BgRGB("b", Color{Red: 10, Green: 20, Blue: 30}) +
+		BgRGB("c", Color{Red: 20, Green: 40, Blue: 60})
+	if got := BgGradient("abc", first, second); got != wantBg {
+		t.Fatalf("BgGradient() = %q, want %q", got, wantBg)
 	}
 }
 
-// RgbTemplate
-
-func TestCreateRgbTemplate(t *testing.T) {
-	bg := RGB(10, 20, 30)
-	fg := RGB(200, 200, 200)
-	tmpl := CreateRgbTemplate(bg, fg)
-
-	if tmpl == nil {
-		t.Fatal("CreateRgbTemplate returned nil")
+func TestCheck8Bit(t *testing.T) {
+	value := 10
+	check8Bit(&value, 12)
+	if value != 22 {
+		t.Fatalf("check8Bit() value = %d, want 22", value)
 	}
 
-	if tmpl.Bg != bg {
-		t.Errorf("Bg = %v, want %v", tmpl.Bg, bg)
-	}
-
-	if tmpl.Fg != fg {
-		t.Errorf("Fg = %v, want %v", tmpl.Fg, bg)
+	check8Bit(&value, 300)
+	if value != 255 {
+		t.Fatalf("check8Bit() should clamp to 255, got %d", value)
 	}
 }
 
-func TestRgbTemplate_FormatString(t *testing.T) {
-	bg := RGB(0, 0, 0)
-	fg := RGB(255, 255, 255)
-	tmpl := CreateRgbTemplate(bg, fg)
+func TestRgbTemplate(t *testing.T) {
+	bg := Color{Red: 1, Green: 2, Blue: 3}
+	fg := Color{Red: 4, Green: 5, Blue: 6}
 
-	result := tmpl.FormatString("test")
-
-	if !strings.Contains(result, "\x1b[48;2;") {
-		t.Errorf("FormatString: background escape sequence missing, got %q", result)
+	template := CreateRgbTemplate(bg, fg)
+	if template == nil {
+		t.Fatal("CreateRgbTemplate() returned nil")
+	}
+	if template.Bg != bg || template.Fg != fg {
+		t.Fatalf("CreateRgbTemplate() = %#v, want Bg %#v and Fg %#v", template, bg, fg)
 	}
 
-	if !strings.Contains(result, "\x1b[38;2;") {
-		t.Errorf("FormatString: foreground escape sequence missing, got %q", result)
-	}
-
-	if !strings.Contains(result, "test") {
-		t.Errorf("FormatString: original text missing, got %q", result)
+	want := BgRGB(FgRGB("hello", fg), bg)
+	if got := template.FormatString("hello"); got != want {
+		t.Fatalf("RgbTemplate.FormatString() = %q, want %q", got, want)
 	}
 }
 
-func TestRgbTemplate_FormatString_LayerOrder(t *testing.T) {
-	bg := RGB(10, 20, 30)
-	fg := RGB(200, 100, 50)
-	tmpl := CreateRgbTemplate(bg, fg)
-
-	result := tmpl.FormatString("x")
-
-	bgIdx := strings.Index(result, "\x1b[48;2;")
-	fgIdx := strings.Index(result, "\x1b[38;2;")
-
-	if bgIdx == -1 || fgIdx == -1 {
-		t.Fatal("missing escape sequences in FormatString output")
+func TestRgbTemplatePrintMethods(t *testing.T) {
+	template := RgbTemplate{
+		Bg: Color{Red: 1, Green: 2, Blue: 3},
+		Fg: Color{Red: 4, Green: 5, Blue: 6},
 	}
 
-	if bgIdx > fgIdx {
-		t.Errorf("expected BgRGB to wrap FgRGB (bg before fg), got bg at %d, fg at %d", bgIdx, fgIdx)
+	t.Run("Print", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return template.Print("hello", 123)
+		})
+		want := template.FormatString("hello") + template.FormatString("123")
+		if err != nil {
+			t.Fatalf("RgbTemplate.Print() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("RgbTemplate.Print() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("RgbTemplate.Print() n = %d, want %d", n, len(want))
+		}
+	})
+
+	t.Run("Println", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return template.Println("hello", "world")
+		})
+		want := template.FormatString("hello") + " " + template.FormatString("world") + "\n"
+		if err != nil {
+			t.Fatalf("RgbTemplate.Println() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("RgbTemplate.Println() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("RgbTemplate.Println() n = %d, want %d", n, len(want))
+		}
+	})
+
+	t.Run("Printf", func(t *testing.T) {
+		got, n, err := captureScolorStdout(t, func() (int, error) {
+			return template.Printf("hello %s", "gopher")
+		})
+		want := template.FormatString("hello gopher")
+		if err != nil {
+			t.Fatalf("RgbTemplate.Printf() error = %v", err)
+		}
+		if got != want {
+			t.Fatalf("RgbTemplate.Printf() output = %q, want %q", got, want)
+		}
+		if n != len(want) {
+			t.Fatalf("RgbTemplate.Printf() n = %d, want %d", n, len(want))
+		}
+	})
+}
+
+func TestTmplGradientUsesTemplateColors(t *testing.T) {
+	first := RgbTemplate{
+		Bg: Color{Red: 10, Green: 20, Blue: 30},
+		Fg: Color{Red: 40, Green: 50, Blue: 60},
 	}
-}
+	second := RgbTemplate{
+		Bg: Color{Red: 30, Green: 60, Blue: 90},
+		Fg: Color{Red: 80, Green: 100, Blue: 120},
+	}
 
-// environment awarness
+	want := BgRGB(FgRGB("a", Color{Red: 40, Green: 50, Blue: 60}), Color{Red: 10, Green: 20, Blue: 30}) +
+		BgRGB(FgRGB("b", Color{Red: 50, Green: 62, Blue: 75}), Color{Red: 15, Green: 30, Blue: 45}) +
+		BgRGB(FgRGB("c", Color{Red: 60, Green: 74, Blue: 90}), Color{Red: 20, Green: 40, Blue: 60}) +
+		BgRGB(FgRGB("d", Color{Red: 70, Green: 86, Blue: 105}), Color{Red: 25, Green: 50, Blue: 75})
 
-func TestIsTTY_ReturnsBool(t *testing.T) {
-	result := isTTY()
-	_ = result
-}
-
-func TestHasTrueColor_ReturnsBool(t *testing.T) {
-	result := hasTrueColor()
-	_ = result
-}
-
-func TestIsRGBSupport_ConsistentWithComponents(t *testing.T) {
-	expected := isTTY() && hasTrueColor()
-	if IsRGBSupported != expected {
-		t.Errorf("IsRGBSupported = %v, want %v (isTTY=%v, hasTrueColor=%v)",
-			IsRGBSupported, expected, isTTY(), hasTrueColor())
+	if got := TmplGradient("abcd", first, second); got != want {
+		t.Fatalf("TmplGradient() = %q, want %q", got, want)
 	}
 }
